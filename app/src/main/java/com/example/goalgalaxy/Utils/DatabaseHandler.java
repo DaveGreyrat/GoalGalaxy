@@ -20,6 +20,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TODO_TABLE = "todo";
     private static final String ID = "id";
     private static final String TASK = "task";
+    private static final String DESCRIPTION = "description";
     private static final String STATUS = "status";
     private static final String CREATE_TODO_TABLE = "CREATE TABLE " + TODO_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, "
             + STATUS + " INTEGER)";
@@ -88,11 +89,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
     }
 
-    public void updateTask(int id, String task) {
-        ContentValues cv = new ContentValues();
-        cv.put(TASK, task);
-        db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+    public void updateTask(int id, String task, String description) {
+        ContentValues cv1 = new ContentValues();
+        ContentValues cv2 = new ContentValues();
+        cv1.put(TASK, task);
+        cv2.put(DESCRIPTION, description);
+        db.update(TODO_TABLE, cv1, ID + "= ?", new String[] {String.valueOf(id)});
+        db.update(TODO_TABLE, cv2, ID + "= ?", new String[] {String.valueOf(id)});
     }
+
 
     public void deleteTask(int id){
         db.delete(TODO_TABLE, ID + "= ?", new String[] {String.valueOf(id)});

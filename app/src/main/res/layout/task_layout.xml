@@ -22,6 +22,14 @@
             android:buttonTint="@color/first"
             tools:text="Go to the market and bring vegetables immediately today."/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/todoCheckBox"
+            android:layout_marginBottom="-25dp"
+            android:text="Go to the market and bring vegetables immedia vegetables immediately to" />
+
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
