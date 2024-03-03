@@ -15,18 +15,21 @@
 
         <CheckBox
             android:id="@+id/todoCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:paddingStart="8dp"
-            android:buttonTint="@color/first"
-            tools:text="Go to the market and bring vegetables immediately today."/>
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/todoCheckBox"
-            android:layout_marginBottom="-25dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="20dp"
+            android:paddingStart="8dp"
+            android:buttonTint="@color/first"
+            tools:text="Market"/>
+
+        <TextView
+            android:id="@+id/taskDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/todoCheckBox"
+            android:layout_marginTop="-10dp"
+            android:layout_marginStart="40dp"
             android:text="Go to the market and bring vegetables immedia vegetables immediately to" />
 
 

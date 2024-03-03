@@ -23,7 +23,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DESCRIPTION = "description";
     private static final String STATUS = "status";
     private static final String CREATE_TODO_TABLE = "CREATE TABLE " + TODO_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, "
-            + STATUS + " INTEGER)";
+            + DESCRIPTION + "TEXT, " + STATUS + " INTEGER)";
 
     private SQLiteDatabase db;
 
@@ -38,9 +38,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TODO_TABLE);
-        // Create tables again
         onCreate(db);
     }
 
@@ -51,6 +49,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void insertTask(ToDoModel task){
         ContentValues cv = new ContentValues();
         cv.put(TASK, task.getTask());
+        cv.put(DESCRIPTION, task.getDescription());
         cv.put(STATUS, 0);
         db.insert(TODO_TABLE, null, cv);
     }
@@ -68,6 +67,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         ToDoModel task = new ToDoModel();
                         task.setId(cur.getInt(cur.getColumnIndex(ID)));
                         task.setTask(cur.getString(cur.getColumnIndex(TASK)));
+                        task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
                         task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
                         taskList.add(task);
                     }
@@ -90,12 +90,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void updateTask(int id, String task, String description) {
-        ContentValues cv1 = new ContentValues();
-        ContentValues cv2 = new ContentValues();
-        cv1.put(TASK, task);
-        cv2.put(DESCRIPTION, description);
-        db.update(TODO_TABLE, cv1, ID + "= ?", new String[] {String.valueOf(id)});
-        db.update(TODO_TABLE, cv2, ID + "= ?", new String[] {String.valueOf(id)});
+        ContentValues cv = new ContentValues();
+        cv.put(TASK, task);
+        cv.put(DESCRIPTION, description);
+        db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
     }
 
 

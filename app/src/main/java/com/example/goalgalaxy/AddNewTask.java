@@ -59,7 +59,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         newTaskText = requireView().findViewById(R.id.newTaskText);
-        newTaskText = requireView().findViewById(R.id.newTaskDescription);
+        newTaskDescription = requireView().findViewById(R.id.newTaskDescription);
         newTaskSaveButton = getView().findViewById(R.id.newTaskButton);
 
         boolean isUpdate = false;
@@ -74,12 +74,13 @@ public class AddNewTask extends BottomSheetDialogFragment {
             assert task != null;
             if(task.length()>0) {
                 newTaskSaveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark));
-                newTaskSaveButton.setBackgroundColor(R.color.third);
+                newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.third));
             }
         }
 
         db = new DatabaseHandler(getActivity());
         db.openDatabase();
+
 
         newTaskText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -90,15 +91,16 @@ public class AddNewTask extends BottomSheetDialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.toString().equals("")){
                     newTaskSaveButton.setEnabled(false);
-                    newTaskSaveButton.setTextColor(Color.GRAY);
-                    newTaskSaveButton.setBackgroundColor(R.color.gray);
+                    newTaskSaveButton.setTextColor(ContextCompat.getColor(requireContext(),R.color.darker_gray));
+                    newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.gray));
                 }
                 else{
                     newTaskSaveButton.setEnabled(true);
                     newTaskSaveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark));
-                    newTaskSaveButton.setBackgroundColor(R.color.third);
+                    newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.third));
                 }
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -117,6 +119,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 else {
                     ToDoModel task = new ToDoModel();
                     task.setTask(text);
+                    task.setDescription(description);
                     task.setStatus(0);
                     db.insertTask(task);
                 }

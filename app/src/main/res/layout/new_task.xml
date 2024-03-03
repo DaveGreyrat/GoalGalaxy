@@ -1,4 +1,15 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardBackgroundColor="@android:color/transparent"
+    card_view:cardCornerRadius="10dp"
+    card_view:cardElevation="0dp"
+    card_view:contentPadding="0dp">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,6 +22,8 @@
         android:background="@null"
         android:hint="New task"
         android:minHeight="48dp"
+        android:maxLength="22"
+        android:lines="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textSize="25dp" />
 
@@ -52,6 +65,8 @@
         android:backgroundTint="@color/gray"
         android:text="Save"
         android:textAllCaps="false"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@color/darker_gray" />
 
 </RelativeLayout>
+</androidx.cardview.widget.CardView>
+

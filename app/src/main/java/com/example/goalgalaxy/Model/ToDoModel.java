@@ -2,7 +2,7 @@ package com.example.goalgalaxy.Model;
 
 public class ToDoModel {
     private int id, status;
-    private String task;
+    private String task, description;
 
     public int getId() {
         return id;
@@ -26,5 +26,13 @@ public class ToDoModel {
 
     public void setTask(String task) {
         this.task = task;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
+    public void setDescription(String description){
+        this.description = description;
     }
 }
