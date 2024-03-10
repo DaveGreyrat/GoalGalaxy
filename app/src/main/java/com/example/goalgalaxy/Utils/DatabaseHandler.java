@@ -22,13 +22,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TASK = "task";
     private static final String DESCRIPTION = "description";
     private static final String STATUS = "status";
-    private static final String CREATE_TODO_TABLE = "CREATE TABLE " + TODO_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, "
-            + DESCRIPTION + "TEXT, " + STATUS + " INTEGER)";
+    private static final String CREATE_TODO_TABLE = "CREATE TABLE " + TODO_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, " + DESCRIPTION + " DESCRIPTION, "
+            + STATUS + " INTEGER)";
 
     private SQLiteDatabase db;
 
     public DatabaseHandler(Context context) {
-        super(context, NAME, null, VERSION);
+        super(context, NAME,null, VERSION);
     }
 
     @Override
@@ -38,7 +38,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TODO_TABLE);
+        // Create tables again
         onCreate(db);
     }
 

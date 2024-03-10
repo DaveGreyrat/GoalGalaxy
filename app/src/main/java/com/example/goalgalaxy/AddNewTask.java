@@ -81,17 +81,17 @@ public class AddNewTask extends BottomSheetDialogFragment {
         db = new DatabaseHandler(getActivity());
         db.openDatabase();
 
-
         newTaskText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
+            @SuppressLint("ResourceType")
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.toString().equals("")){
                     newTaskSaveButton.setEnabled(false);
-                    newTaskSaveButton.setTextColor(ContextCompat.getColor(requireContext(),R.color.darker_gray));
+                    newTaskSaveButton.setTextColor(ContextCompat.getColor(requireContext(),Color.GRAY));
                     newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.gray));
                 }
                 else{
@@ -100,7 +100,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.third));
                 }
             }
-
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -119,8 +118,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 else {
                     ToDoModel task = new ToDoModel();
                     task.setTask(text);
-                    task.setDescription(description);
                     task.setStatus(0);
+                    task.setDescription(description);
                     db.insertTask(task);
                 }
                 dismiss();

@@ -28,11 +28,12 @@ public class ToDoModel {
         this.task = task;
     }
 
-    public String getDescription(){
+
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description){
+    public void setDescription(String description) {
         this.description = description;
     }
 }
