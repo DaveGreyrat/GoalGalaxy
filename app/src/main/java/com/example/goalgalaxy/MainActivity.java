@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 
 import com.example.goalgalaxy.Adapter.ToDoAdapter;
 import com.example.goalgalaxy.Model.ToDoModel;
@@ -31,10 +34,12 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
     private List<ToDoModel> taskList;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         db = new DatabaseHandler(this);
         db.openDatabase();
@@ -69,5 +74,14 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         Collections.reverse(taskList);
         tasksAdapter.setTasks(taskList);
         tasksAdapter.notifyDataSetChanged();
+    }
+
+    private void clearRememberMe() {
+        SharedPreferences sharedPref = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove("username");
+        editor.remove("password");
+        editor.remove("rememberMe");
+        editor.apply();
     }
 }

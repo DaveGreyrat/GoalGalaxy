@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GoalGalaxy</string>
+    <string name="if_open_email" />
 </resources>
