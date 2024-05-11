@@ -38,12 +38,6 @@ public class SettingsFragment extends Fragment {
         ImageView backImageView = view.findViewById(R.id.back);
 
 
-        backImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requireActivity().onBackPressed();
-            }
-        });
 
         changeUsernameTextView.setOnClickListener(new View.OnClickListener() {
             @Override

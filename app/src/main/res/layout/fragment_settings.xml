@@ -8,14 +8,6 @@
     android:orientation="vertical"
     tools:context=".Fragments.SettingsFragment">
 
-    <ImageView
-        android:id="@+id/back"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="7dp"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/baseline_arrow_back_24" />
-
 
     <LinearLayout
 
