@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".Authentication.PasswordResetActivity">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:elevation="20dp"
+        app:cardCornerRadius="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/custom_edittext"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Change Username"
+                android:textAlignment="center"
+                android:textColor="@color/first"
+                android:textSize="33sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_marginTop="10sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Please enter your new username and press change to change"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15dp"
+                />
+
+
+
+            <EditText
+                android:id="@+id/new_username"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/custom_edittext"
+                android:drawableLeft="@drawable/baseline_person_24"
+                android:drawablePadding="8dp"
+                android:hint="New Username"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textCursorDrawable="@drawable/black_cursor"/>
+
+            <Button
+                android:id="@+id/change_username_btn"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="30dp"
+                android:backgroundTint="@color/first"
+                android:text="Change Username"
+                android:textSize="18sp"
+                app:cornerRadius = "20dp"/>
+
+            <TextView
+                android:id="@+id/gobackSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:padding="8dp"
+                android:text="Go back to Settings"
+                android:textColor="@color/second"
+                android:textSize="13.5sp" />
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+</LinearLayout>

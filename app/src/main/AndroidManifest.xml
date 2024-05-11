@@ -51,6 +51,14 @@
             android:name=".Authentication.ChangeEmailActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".Authentication.ChangeUsernameActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".Fragments.Settings.FAQActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".Fragments.SettingsFragment">
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/baseline_arrow_back_24" />
+
+
+    <LinearLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:padding="16dp"
+            android:text="Account Info"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/change_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Change Username"
+            android:textColor="@color/first"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:id="@+id/change_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Change Password"
+            android:textColor="@color/first"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:padding="16dp"
+            android:text="Policy and FAQ"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/policy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Policy"
+            android:textColor="@color/first"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:id="@+id/FAQ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="FAQ"
+            android:textColor="@color/first"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:padding="16dp"
+            android:text="Account Management"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/log_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Log out"
+            android:textColor="@color/first"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:id="@+id/Delete_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Delete Account"
+            android:textColor="@color/first"
+            android:textSize="18sp" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
