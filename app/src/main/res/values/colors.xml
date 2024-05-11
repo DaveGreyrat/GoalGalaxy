@@ -8,7 +8,7 @@
     <color name="fourth">#D0E7D2</color>
     <color name="colorPrimary">@color/second</color>
     <color name="colorPrimaryDark">@color/first</color>
-    <color name="colorAccent">@color/white</color>
+    <color name="colorAccent">@color/black</color>
     <color name="gray">#33878787</color>
     <color name="darker_gray">#FFAAAAAA</color>
 </resources>

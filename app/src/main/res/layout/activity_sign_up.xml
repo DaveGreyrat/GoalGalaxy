@@ -44,7 +44,8 @@
                 android:drawablePadding="8dp"
                 android:hint="Email"
                 android:padding="8dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textCursorDrawable="@drawable/black_cursor"/>
 
 
             <EditText
@@ -58,7 +59,8 @@
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:padding="8dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textCursorDrawable="@drawable/black_cursor"/>
 
 
             <EditText
@@ -72,7 +74,8 @@
                 android:hint="Confirm Password"
                 android:inputType="textPassword"
                 android:padding="8dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textCursorDrawable="@drawable/black_cursor"/>
 
 
             <Button

@@ -57,7 +57,8 @@
                 android:drawablePadding="8dp"
                 android:hint=" Current Email"
                 android:padding="8dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textCursorDrawable="@drawable/black_cursor"/>
 
             <EditText
                 android:id="@+id/new_email"
@@ -69,7 +70,8 @@
                 android:drawablePadding="8dp"
                 android:hint="New Email"
                 android:padding="8dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textCursorDrawable="@drawable/black_cursor"/>
 
             <Button
                 android:id="@+id/resetemail"
