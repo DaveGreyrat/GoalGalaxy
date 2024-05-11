@@ -21,9 +21,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String ID = "id";
     private static final String TASK = "task";
     private static final String DESCRIPTION = "description";
+    private static final String YEAR = "year";
+    private static final String MONTH = "month";
+    private static final String DAY = "day";
+    private static final String HOUR = "hour";
+    private static final String MINUTE = "minute";
     private static final String STATUS = "status";
     private static final String CREATE_TODO_TABLE = "CREATE TABLE " + TODO_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, " + DESCRIPTION + " DESCRIPTION, "
-            + STATUS + " INTEGER)";
+            + YEAR + " YEAR, " + MONTH + " MONTH, " + DAY + " DAY, " + HOUR + " HOUR, " + MINUTE + " MINUTE, " + STATUS + " INTEGER)";
 
     private SQLiteDatabase db;
 
@@ -52,6 +57,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(TASK, task.getTask());
         cv.put(DESCRIPTION, task.getDescription());
+        cv.put(YEAR, task.getDateY());
+        cv.put(MONTH, task.getDateM());
+        cv.put(DAY, task.getDateD());
+        cv.put(HOUR, task.getTimeH());
+        cv.put(MINUTE, task.getTimeM());
         cv.put(STATUS, 0);
         db.insert(TODO_TABLE, null, cv);
     }
@@ -70,6 +80,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         task.setId(cur.getInt(cur.getColumnIndex(ID)));
                         task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                         task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
+                        task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
+                        task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
+                        task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
+                        task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
+                        task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
                         task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
                         taskList.add(task);
                     }
@@ -91,10 +106,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
     }
 
-    public void updateTask(int id, String task, String description) {
+    public void updateTask(int id, String task, String description, int dateY, int dateM, int dateD, int timeH, int timeM) {
         ContentValues cv = new ContentValues();
         cv.put(TASK, task);
         cv.put(DESCRIPTION, description);
+        cv.put(YEAR, dateY);
+        cv.put(MONTH, dateM);
+        cv.put(DAY, dateD);
+        cv.put(HOUR, timeH);
+        cv.put(MINUTE, timeM);
         db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
     }
 

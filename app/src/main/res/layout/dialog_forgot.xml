@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/dialogBox"
+        android:id="@+id/dialogBox1"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/white_box">
 
@@ -69,7 +69,7 @@
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/emailBox"
-            app:layout_constraintBottom_toBottomOf="@id/dialogBox"
+            app:layout_constraintBottom_toBottomOf="@id/dialogBox1"
             app:layout_constraintEnd_toStartOf="@id/btnReset"/>
 
         <Button
@@ -85,7 +85,7 @@
             android:textSize="14sp"
             app:cornerRadius = "20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/dialogBox"
+            app:layout_constraintBottom_toBottomOf="@id/dialogBox1"
             app:layout_constraintStart_toEndOf="@id/btnCancel"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
