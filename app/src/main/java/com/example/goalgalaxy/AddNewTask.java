@@ -107,13 +107,14 @@ public class AddNewTask extends BottomSheetDialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.toString().equals("")){
                     newTaskSaveButton.setEnabled(false);
-                    newTaskSaveButton.setTextColor(ContextCompat.getColor(requireContext(),Color.GRAY));
-                    newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.gray));
+                    newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.darker_gray));
+                    newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray));
+
                 }
                 else{
                     newTaskSaveButton.setEnabled(true);
-                    newTaskSaveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark));
-                    newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.third));
+                    newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+                    newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.third));
                 }
             }
 
@@ -130,10 +131,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
             }
         });
-
-
-
-
 
 
 
