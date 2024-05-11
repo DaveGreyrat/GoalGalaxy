@@ -35,7 +35,6 @@ public class SettingsFragment extends Fragment {
         TextView faqTextView = view.findViewById(R.id.FAQ);
         TextView logOutTextView = view.findViewById(R.id.log_out);
         TextView deleteAccountTextView = view.findViewById(R.id.Delete_account);
-        ImageView backImageView = view.findViewById(R.id.back);
 
 
 
