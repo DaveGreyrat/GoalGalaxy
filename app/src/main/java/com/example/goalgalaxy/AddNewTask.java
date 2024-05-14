@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -60,11 +61,13 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private DatabaseHandler db;
     private boolean isUpdate;
     private Bundle bundle;
-
+    private DateTimePicker dateTimePickerFragment;
 
     public static AddNewTask newInstance(){
         return new AddNewTask();
     }
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,11 +129,14 @@ public class AddNewTask extends BottomSheetDialogFragment {
         reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateTimePicker dialogFragment = new DateTimePicker();
-                dialogFragment.show(getFragmentManager(), "DateTimePickerDialogFragment");
-
+                // Создайте экземпляр DateTimePicker
+                dateTimePickerFragment = new DateTimePicker();
+                // Показать фрагмент DateTimePicker
+                dateTimePickerFragment.show(getChildFragmentManager(), "DateTimePickerDialogFragment");
             }
         });
+
+
 
 
 
@@ -157,10 +163,18 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     task.setStatus(0);
                     db.insertTask(task);
                 }
+
                 dismiss();
+
+
             }
         });
+
+
+
+
     }
+
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog){
@@ -170,3 +184,4 @@ public class AddNewTask extends BottomSheetDialogFragment {
     }
 
 }
+

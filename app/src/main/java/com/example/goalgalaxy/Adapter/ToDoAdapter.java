@@ -1,5 +1,6 @@
 package com.example.goalgalaxy.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,8 @@ import com.example.goalgalaxy.Utils.DatabaseHandler;
 
 import java.util.List;
 import java.util.Locale;
+import android.content.Context;
+
 
 public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
 
@@ -33,6 +36,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         this.db = db;
         this.activity = activity;
     }
+
 
     @NonNull
     @Override
@@ -103,19 +107,23 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
 
     public void editItem(int position) {
         ToDoModel item = todoList.get(position);
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", item.getId());
-        bundle.putString("task", item.getTask());
-        bundle.putString("description", item.getDescription());
-        bundle.putInt("year", item.getDateY());
-        bundle.putInt("month", item.getDateM());
-        bundle.putInt("day", item.getDateD());
-        bundle.putInt("hour", item.getTimeH());
-        bundle.putInt("minute", item.getTimeM());
-        AddNewTask fragment = new AddNewTask();
-        fragment.setArguments(bundle);
-        fragment.show(activity.getSupportFragmentManager(), AddNewTask.TAG);
+        if (item != null) { // Проверка на наличие элемента в списке
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", item.getId());
+            bundle.putString("task", item.getTask());
+            bundle.putString("description", item.getDescription());
+            bundle.putInt("year", item.getDateY());
+            bundle.putInt("month", item.getDateM());
+            bundle.putInt("day", item.getDateD());
+            bundle.putInt("hour", item.getTimeH());
+            bundle.putInt("minute", item.getTimeM());
+            AddNewTask fragment = new AddNewTask();
+            fragment.setArguments(bundle);
+            fragment.show(activity.getSupportFragmentManager(), AddNewTask.TAG);
+        }
     }
+
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CheckBox task;

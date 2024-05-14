@@ -54,7 +54,8 @@
             android:layout_marginEnd="16dp"
             android:text="Select date"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/in_date" />
+            app:layout_constraintTop_toTopOf="@+id/in_date"
+            android:backgroundTint="@color/third"/>
 
         <EditText
             android:id="@+id/in_time"
@@ -76,7 +77,8 @@
             android:layout_marginEnd="16dp"
             android:text="Select time"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/in_time" />
+            app:layout_constraintTop_toTopOf="@+id/in_time"
+            android:backgroundTint="@color/third"/>
 
         <!-- Добавлена кнопка "ОК" в том же ConstraintLayout -->
         <Button
@@ -88,7 +90,8 @@
             android:text="OK"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_time" />
+            app:layout_constraintTop_toBottomOf="@id/btn_time"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

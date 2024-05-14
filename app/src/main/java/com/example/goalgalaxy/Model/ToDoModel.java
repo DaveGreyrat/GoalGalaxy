@@ -16,6 +16,7 @@ public class ToDoModel {
         this.id = id;
     }
 
+
     public int getStatus() {
         return status;
     }
@@ -23,6 +24,7 @@ public class ToDoModel {
     public void setStatus(int status) {
         this.status = status;
     }
+
 
     public String getTask() {
         return task;
@@ -33,6 +35,7 @@ public class ToDoModel {
     }
 
 
+
     public String getDescription() {
         return description;
     }
@@ -40,6 +43,7 @@ public class ToDoModel {
     public void setDescription(String description) {
         this.description = description;
     }
+
 
     public int getDateY() {
         return dateY;
@@ -49,6 +53,7 @@ public class ToDoModel {
         this.dateY = dateY;
     }
 
+
     public int getDateM() {
         return dateM;
     }
@@ -56,6 +61,7 @@ public class ToDoModel {
     public void setDateM(int dateM) {
         this.dateM = dateM;
     }
+
 
     public int getDateD() {
         return dateD;
@@ -65,6 +71,7 @@ public class ToDoModel {
         this.dateD = dateD;
     }
 
+
     public int getTimeH() {
         return timeH;
     }
@@ -73,6 +80,7 @@ public class ToDoModel {
         this.timeH = timeH;
     }
 
+
     public int getTimeM() {
         return timeM;
     }
@@ -80,6 +88,7 @@ public class ToDoModel {
     public void setTimeM(int timeM) {
         this.timeM = timeM;
     }
+
 
     public boolean isReminder() {
         return isReminder;

@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.goalgalaxy.Adapter.ToDoAdapter;
 import com.example.goalgalaxy.AddNewTask;
+import com.example.goalgalaxy.DateTimePicker;
 import com.example.goalgalaxy.DialogCloseListener;
 import com.example.goalgalaxy.MainActivity;
 import com.example.goalgalaxy.Model.ToDoModel;
@@ -44,11 +45,22 @@ public class HomeFragment extends Fragment implements DialogCloseListener {
     private Button changeQuoteButton;
 
     private ArrayList<String> quotes = new ArrayList<>();
+    private Context context;
+    private DateTimePicker dateTimePicker;
+
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
 
     @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        dateTimePicker = new DateTimePicker();
+        dateTimePicker.setContext(requireContext());
+
 
         // Initialize TextView and Button
         quoteText = view.findViewById(R.id.quoteText);
@@ -81,9 +93,11 @@ public class HomeFragment extends Fragment implements DialogCloseListener {
 
         tasksAdapter.setTasks(taskList);
 
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dateTimePicker.clearDateTime();
                 AddNewTask.newInstance().show(requireActivity().getSupportFragmentManager(), AddNewTask.TAG);
             }
         });

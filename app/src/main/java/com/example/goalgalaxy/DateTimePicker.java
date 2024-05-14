@@ -5,10 +5,13 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,18 +33,93 @@ public class DateTimePicker extends DialogFragment {
     private EditText inDate, inTime;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private int Year, Month, Day, Hour, Minute;
+    private boolean isDateSet = false;
+    private boolean isTimeSet = false;
+    private static final String PREFS_NAME = "DateTimePrefs";
+
+    // Ключи для сохранения значений
+    private static final String KEY_YEAR = "year";
+    private static final String KEY_MONTH = "month";
+    private static final String KEY_DAY = "day";
+    private static final String KEY_HOUR = "hour";
+    private static final String KEY_MINUTE = "minute";
+
+    private Context context;
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public void clearDateTime() {
+        // Проверяем, что контекст не является null
+        if (context != null) {
+            // Удаляем сохраненные данные
+            SharedPreferences.Editor editor = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
+            editor.clear();
+            editor.apply();
+
+            // Устанавливаем текущую дату и время
+            Calendar calendar = Calendar.getInstance();
+            mYear = calendar.get(Calendar.YEAR);
+            mMonth = calendar.get(Calendar.MONTH);
+            mDay = calendar.get(Calendar.DAY_OF_MONTH);
+            mHour = calendar.get(Calendar.HOUR_OF_DAY);
+            mMinute = calendar.get(Calendar.MINUTE);
+
+            // Обновляем отображение даты и времени, если оно есть
+            if (inDate != null) {
+                inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", mDay, mMonth + 1, mYear));
+            }
+            if (inTime != null) {
+                inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", mHour, mMinute));
+            }
+        }
+    }
+
+
+
+
+
+    private void saveDateTime(Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
+        editor.putInt(KEY_YEAR, mYear);
+        editor.putInt(KEY_MONTH, mMonth);
+        editor.putInt(KEY_DAY, mDay);
+        editor.putInt(KEY_HOUR, mHour);
+        editor.putInt(KEY_MINUTE, mMinute);
+        editor.apply();
+    }
+
+    // Метод для загрузки даты и времени из SharedPreferences
+    private void loadDateTime(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        mYear = prefs.getInt(KEY_YEAR, mYear);
+        mMonth = prefs.getInt(KEY_MONTH, mMonth);
+        mDay = prefs.getInt(KEY_DAY, mDay);
+        mHour = prefs.getInt(KEY_HOUR, mHour);
+        mMinute = prefs.getInt(KEY_MINUTE, mMinute);
+    }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_layout, container, false);
 
+        loadDateTime(requireContext());
+
+
         final Calendar calendar = Calendar.getInstance();
-        mYear = calendar.get(Calendar.YEAR);
-        mMonth = calendar.get(Calendar.MONTH);
-        mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        mHour = calendar.get(Calendar.HOUR_OF_DAY);
-        mMinute = calendar.get(Calendar.MINUTE);
+        if (!isDateSet) {
+            mYear = calendar.get(Calendar.YEAR);
+            mMonth = calendar.get(Calendar.MONTH);
+        }
+        if (!isTimeSet){
+            mDay = calendar.get(Calendar.DAY_OF_MONTH);
+            mHour = calendar.get(Calendar.HOUR_OF_DAY);
+            mMinute = calendar.get(Calendar.MINUTE);
+        }
+        loadDateTime(requireContext());
 
 
         btnDatePicker = view.findViewById(R.id.btn_date);
@@ -50,28 +128,30 @@ public class DateTimePicker extends DialogFragment {
         inDate = view.findViewById(R.id.in_date);
         inTime = view.findViewById(R.id.in_time);
 
-        inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", Day, Month, Year));
-        inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", Hour, Minute));
+        inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", mDay, mMonth, mYear));
+        inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", mHour, mMinute));
 
         btnDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
-
+                // Установите выбранную дату в диалоге, используя значения mYear, mMonth и mDay
                 DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                inDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                mYear = year;
+                                mMonth = monthOfYear;
+                                mDay = dayOfMonth;
+                                isDateSet = true;
+                                inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", mDay, mMonth + 1, mYear));
                             }
                         }, mYear, mMonth, mDay);
-                datePickerDialog.show();
 
+                datePickerDialog.show();
             }
         });
+
+
 
         btnTimePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,7 +164,10 @@ public class DateTimePicker extends DialogFragment {
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                inTime.setText(hourOfDay + ":" + minute);
+                                mHour = hourOfDay;
+                                mMinute = minute;
+                                isTimeSet = true;
+                                inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", mHour, mMinute));
                             }
                         }, mHour, mMinute, false);
 
@@ -92,16 +175,25 @@ public class DateTimePicker extends DialogFragment {
             }
         });
 
+        if (isDateSet) {
+            inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", mDay, mMonth + 1, mYear));
+        }
+        if (isTimeSet) {
+            inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", mHour, mMinute));
+        }
+
+
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Обработка нажатия кнопки "ОК"
+                saveDateTime(requireContext());
                 dismiss();
             }
         });
 
         return view;
     }
+
 
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Dialog dialog = new Dialog(requireContext());
@@ -123,6 +215,7 @@ public class DateTimePicker extends DialogFragment {
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
+        saveDateTime(requireContext());
         Activity activity = getActivity();
         if (activity instanceof DialogCloseListener) {
             ((DialogCloseListener) activity).handleDialogClose(dialog);
