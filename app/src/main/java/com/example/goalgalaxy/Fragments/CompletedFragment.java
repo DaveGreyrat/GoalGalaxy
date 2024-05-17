@@ -1,7 +1,8 @@
 package com.example.goalgalaxy.Fragments;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,21 +30,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TodoFragment extends Fragment {
+
+public class CompletedFragment extends Fragment {
+
 
     private DatabaseHandler db;
 
     private RecyclerView tasksRecyclerView;
     private ToDoAdapter tasksAdapter;
-    private FloatingActionButton fab;
+
     private List<ToDoModel> taskList;
+    private Context context;
 
-
-
-    @Nullable
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_todo, container, false);
+        View view = inflater.inflate(R.layout.fragment_completed, container, false);
+
+
 
 
         db = new DatabaseHandler(requireActivity());
@@ -58,20 +62,18 @@ public class TodoFragment extends Fragment {
                 ItemTouchHelper(new RecyclerItemTouchHelper(tasksAdapter));
         itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
 
-        fab = view.findViewById(R.id.fab);
-
         taskList = db.getAllTasks();
         Collections.reverse(taskList);
 
         tasksAdapter.setTasks(taskList);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddNewTask.newInstance().show(requireActivity().getSupportFragmentManager(), AddNewTask.TAG);
-            }
-        });
-
         return view;
+
+
+
     }
+
+
+
 }
+

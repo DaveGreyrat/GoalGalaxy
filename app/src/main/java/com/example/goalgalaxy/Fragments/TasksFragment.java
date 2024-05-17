@@ -1,14 +1,9 @@
 package com.example.goalgalaxy.Fragments;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,27 +21,24 @@ import com.example.goalgalaxy.RecyclerItemTouchHelper;
 import com.example.goalgalaxy.Utils.DatabaseHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
-public class TodayFragment extends Fragment {
-
+public class TasksFragment extends Fragment {
 
     private DatabaseHandler db;
 
     private RecyclerView tasksRecyclerView;
     private ToDoAdapter tasksAdapter;
+    private FloatingActionButton fab;
     private List<ToDoModel> taskList;
-    private Context context;
 
-    @SuppressLint("MissingInflatedId")
+
+
+    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_today, container, false);
-
-
+        View view = inflater.inflate(R.layout.fragment_tasks, container, false);
 
 
         db = new DatabaseHandler(requireActivity());
@@ -61,19 +53,20 @@ public class TodayFragment extends Fragment {
                 ItemTouchHelper(new RecyclerItemTouchHelper(tasksAdapter));
         itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
 
+        fab = view.findViewById(R.id.fab);
 
         taskList = db.getAllTasks();
         Collections.reverse(taskList);
 
         tasksAdapter.setTasks(taskList);
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddNewTask.newInstance().show(requireActivity().getSupportFragmentManager(), AddNewTask.TAG);
+            }
+        });
+
         return view;
-
-
-
     }
-
-
-
 }
-

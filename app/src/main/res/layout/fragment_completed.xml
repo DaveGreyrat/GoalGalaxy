@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.TodoFragment">
+    tools:context=".Fragments.CompletedFragment">
 
     <TextView
         android:id="@+id/tasksText"
@@ -16,7 +16,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
         android:textSize="32sp"
-        android:text="ToDo" />
+        android:text="Completed" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tasksRecyclerView"
@@ -26,16 +26,5 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:nestedScrollingEnabled="true" />
 
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="32dp"
-        android:backgroundTint="@color/first"
-        android:src="@drawable/baseline_add_24"
-        />
 
 </RelativeLayout>

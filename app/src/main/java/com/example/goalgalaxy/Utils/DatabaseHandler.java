@@ -9,14 +9,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.goalgalaxy.Model.ToDoModel;
 
-import java.sql.SQLData;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final int VERSION = 1;
-    private static final String NAME = "toDoListDatabase";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "toDoListDatabase";
     private static final String TODO_TABLE = "todo";
     private static final String ID = "id";
     private static final String TASK = "task";
@@ -27,13 +26,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String HOUR = "hour";
     private static final String MINUTE = "minute";
     private static final String STATUS = "status";
-    private static final String CREATE_TODO_TABLE = "CREATE TABLE " + TODO_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, " + DESCRIPTION + " DESCRIPTION, "
-            + YEAR + " YEAR, " + MONTH + " MONTH, " + DAY + " DAY, " + HOUR + " HOUR, " + MINUTE + " MINUTE, " + STATUS + " INTEGER)";
+    private static final String CREATE_TODO_TABLE = "CREATE TABLE " + TODO_TABLE + "("
+            + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + TASK + " TEXT, "
+            + DESCRIPTION + " TEXT, "
+            + YEAR + " INTEGER, "
+            + MONTH + " INTEGER, "
+            + DAY + " INTEGER, "
+            + HOUR + " INTEGER, "
+            + MINUTE + " INTEGER, "
+            + STATUS + " INTEGER)";
 
     private SQLiteDatabase db;
 
     public DatabaseHandler(Context context) {
-        super(context, NAME,null, VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -43,9 +50,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TODO_TABLE);
-        // Create tables again
         onCreate(db);
     }
 
@@ -70,32 +75,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<ToDoModel> getAllTasks(){
         List<ToDoModel> taskList = new ArrayList<>();
         Cursor cur = null;
-        db.beginTransaction();
-        try{
-            cur = db.query(TODO_TABLE, null, null, null, null, null, null, null);
-            if(cur != null){
-                if(cur.moveToFirst()){
-                    do{
-                        ToDoModel task = new ToDoModel();
-                        task.setId(cur.getInt(cur.getColumnIndex(ID)));
-                        task.setTask(cur.getString(cur.getColumnIndex(TASK)));
-                        task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
-                        task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
-                        task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
-                        task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
-                        task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
-                        task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
-                        task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
-                        taskList.add(task);
-                    }
-                    while(cur.moveToNext());
-                }
+        try {
+            cur = db.query(TODO_TABLE, null, null, null, null, null, null);
+            if (cur != null && cur.moveToFirst()) {
+                do {
+                    ToDoModel task = new ToDoModel();
+                    task.setId(cur.getInt(cur.getColumnIndex(ID)));
+                    task.setTask(cur.getString(cur.getColumnIndex(TASK)));
+                    task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
+                    task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
+                    task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
+                    task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
+                    task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
+                    task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
+                    task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
+                    taskList.add(task);
+                } while(cur.moveToNext());
             }
-        }
-        finally {
-            db.endTransaction();
-            assert cur != null;
-            cur.close();
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
         }
         return taskList;
     }
@@ -117,7 +117,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cv.put(MINUTE, timeM);
         db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
     }
-
 
     public void deleteTask(int id){
         db.delete(TODO_TABLE, ID + "= ?", new String[] {String.valueOf(id)});

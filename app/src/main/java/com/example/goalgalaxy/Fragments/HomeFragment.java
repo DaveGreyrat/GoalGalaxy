@@ -94,6 +94,7 @@ public class HomeFragment extends Fragment implements DialogCloseListener {
         tasksAdapter.setTasks(taskList);
 
 
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.HabitsFragment">
+    tools:context=".Fragments.TasksFragment">
 
     <TextView
         android:id="@+id/tasksText"
@@ -16,7 +16,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
         android:textSize="32sp"
-        android:text="Habits" />
+        android:text="Tasks" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tasksRecyclerView"

@@ -1,9 +1,7 @@
 package com.example.goalgalaxy;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -16,13 +14,13 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.goalgalaxy.Authentication.LoginActivity;
+import com.example.goalgalaxy.Fragments.CompletedFragment;
 import com.example.goalgalaxy.Fragments.HomeFragment;
 import com.example.goalgalaxy.Fragments.SettingsFragment;
 import com.example.goalgalaxy.Fragments.TodayFragment;
-import com.example.goalgalaxy.Fragments.HabitsFragment;
+import com.example.goalgalaxy.Fragments.GoalsFragment;
 
-import com.example.goalgalaxy.Fragments.TodoFragment;
-import com.example.goalgalaxy.R;
+import com.example.goalgalaxy.Fragments.TasksFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -58,10 +56,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         } else if (itemId == R.id.nav_today) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TodayFragment()).commit();
-        } else if (itemId == R.id.nav_todo) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TodoFragment()).commit();
-        } else if (itemId == R.id.nav_habits) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HabitsFragment()).commit();
+        } else if (itemId == R.id.nav_tasks) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TasksFragment()).commit();
+        } else if (itemId == R.id.nav_goals) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GoalsFragment()).commit();
+        } else if (itemId == R.id.nav_completed) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CompletedFragment()).commit();
         } else if (itemId == R.id.nav_settings) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
         } else if (itemId == R.id.nav_logout) {
