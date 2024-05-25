@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="You are about to delete your account"
-                android:textColor="@color/second"
+                android:textColor="@color/first"
                 android:textSize="20sp"
                 android:textAlignment="center"
                 android:layout_marginBottom="20sp"/>
@@ -45,15 +45,15 @@
                     android:layout_weight="1"
                     android:text="Go back"
                     android:textColor="@color/second"
-                    android:textSize="23sp"/>
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:id="@+id/deleteAccount2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Delete Account"
-                    android:textColor="@color/first"
-                    android:textSize="23sp"/>
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="20sp"/>
 
             </LinearLayout>
 

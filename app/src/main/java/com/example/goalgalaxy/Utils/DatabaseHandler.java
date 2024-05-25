@@ -9,8 +9,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.goalgalaxy.Model.ToDoModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import android.util.Log;
 import java.util.List;
+import java.util.Locale;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -103,7 +107,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updateStatus(int id, int status){
         ContentValues cv = new ContentValues();
         cv.put(STATUS, status);
-        db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+        int rowsAffected = db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+        Log.d("DatabaseHandler", "Rows affected by updateStatus(): " + rowsAffected);
     }
 
     public void updateTask(int id, String task, String description, int dateY, int dateM, int dateD, int timeH, int timeM) {
@@ -121,4 +126,102 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void deleteTask(int id){
         db.delete(TODO_TABLE, ID + "= ?", new String[] {String.valueOf(id)});
     }
+
+    @SuppressLint("Range")
+    public List<ToDoModel> getIncompleteTodayTasks() {
+        List<ToDoModel> taskList = new ArrayList<>();
+        Cursor cur = null;
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1; // January is 0
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        try {
+            cur = db.query(TODO_TABLE, null, YEAR + "=? AND " + MONTH + "=? AND " + DAY + "=? AND " + STATUS + "=?",
+                    new String[]{String.valueOf(year), String.valueOf(month), String.valueOf(day), "0"}, null, null, null);
+            if (cur != null && cur.moveToFirst()) {
+                do {
+                    ToDoModel task = new ToDoModel();
+                    task.setId(cur.getInt(cur.getColumnIndex(ID)));
+                    task.setTask(cur.getString(cur.getColumnIndex(TASK)));
+                    task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
+                    task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
+                    task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
+                    task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
+                    task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
+                    task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
+                    task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
+                    taskList.add(task);
+                } while (cur.moveToNext());
+            }
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
+        }
+        return taskList;
+    }
+
+    @SuppressLint("Range")
+    public List<ToDoModel> getIncompleteTasks() {
+        List<ToDoModel> taskList = new ArrayList<>();
+        Cursor cur = null;
+
+        try {
+            cur = db.query(TODO_TABLE, null, STATUS + "=?",
+                    new String[]{"0"}, null, null, null);
+            if (cur != null && cur.moveToFirst()) {
+                do {
+                    ToDoModel task = new ToDoModel();
+                    task.setId(cur.getInt(cur.getColumnIndex(ID)));
+                    task.setTask(cur.getString(cur.getColumnIndex(TASK)));
+                    task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
+                    task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
+                    task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
+                    task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
+                    task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
+                    task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
+                    task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
+                    taskList.add(task);
+                } while (cur.moveToNext());
+            }
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
+        }
+        return taskList;
+    }
+
+    @SuppressLint("Range")
+    public List<ToDoModel> getCompletedTasks() {
+        List<ToDoModel> taskList = new ArrayList<>();
+        Cursor cur = null;
+
+        try {
+            cur = db.query(TODO_TABLE, null, STATUS + "=?",
+                    new String[]{"1"}, null, null, null);
+            if (cur != null && cur.moveToFirst()) {
+                do {
+                    ToDoModel task = new ToDoModel();
+                    task.setId(cur.getInt(cur.getColumnIndex(ID)));
+                    task.setTask(cur.getString(cur.getColumnIndex(TASK)));
+                    task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
+                    task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
+                    task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
+                    task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
+                    task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
+                    task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
+                    task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
+                    taskList.add(task);
+                } while (cur.moveToNext());
+            }
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
+        }
+        return taskList;
+    }
+
 }

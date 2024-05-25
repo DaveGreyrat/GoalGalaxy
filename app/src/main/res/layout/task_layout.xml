@@ -9,29 +9,59 @@
     android:layout_marginVertical="8dp">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp">
 
         <CheckBox
             android:id="@+id/todoCheckBox"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="-10dp"
             android:textSize="20dp"
-            android:paddingStart="8dp"
-            android:buttonTint="@color/first"
+            android:paddingStart="4dp"
+            app:buttonTint="@color/first"
             tools:text="Market"/>
 
         <TextView
             android:id="@+id/taskDescription"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/todoCheckBox"
+            android:layout_alignParentLeft="true"
             android:layout_marginTop="-10dp"
-            android:layout_marginStart="40dp"
-            android:text="Go to the market and bring vegetables immedia vegetables immediately to" />
+            android:layout_marginStart="37dp"
+            android:text="Go to the market and bring vegetables" />
 
+        <View
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/taskDate"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/taskDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="4dp"
+            android:text="05-19"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/taskTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/taskDate"
+            android:layout_marginTop="2dp"
+            android:text="14:00"
+            android:textColor="@android:color/darker_gray"
+            android:layout_alignParentRight="true" />
 
     </RelativeLayout>
 

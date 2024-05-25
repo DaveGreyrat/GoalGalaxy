@@ -11,4 +11,5 @@
     <color name="colorAccent">@color/black</color>
     <color name="gray">#33878787</color>
     <color name="darker_gray">#FFAAAAAA</color>
+
 </resources>

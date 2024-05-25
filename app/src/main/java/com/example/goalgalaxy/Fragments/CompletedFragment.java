@@ -41,6 +41,9 @@ public class CompletedFragment extends Fragment {
 
     private List<ToDoModel> taskList;
     private Context context;
+    private OnTaskUpdatedListener mListener;
+    private MainActivity mActivity;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -62,10 +65,7 @@ public class CompletedFragment extends Fragment {
                 ItemTouchHelper(new RecyclerItemTouchHelper(tasksAdapter));
         itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
 
-        taskList = db.getAllTasks();
-        Collections.reverse(taskList);
-
-        tasksAdapter.setTasks(taskList);
+        loadCompletedTasks();
 
         return view;
 
@@ -73,6 +73,28 @@ public class CompletedFragment extends Fragment {
 
     }
 
+    public void loadCompletedTasks() {
+        taskList = db.getCompletedTasks();
+        Collections.reverse(taskList);
+        tasksAdapter.setTasks(taskList);
+    }
+
+    public interface OnTaskUpdatedListener {
+        void onTaskUpdated();
+    }
+
+    public void onTaskUpdated() {
+        // Обновите список задач в вашем фрагменте CompletedFragment
+        loadCompletedTasks();
+    }
+
+    public void setOnTaskUpdatedListener(OnTaskUpdatedListener listener) {
+        mListener = listener;
+    }
+
+    public void setMainActivity(MainActivity activity) {
+        mActivity = activity;
+    }
 
 
 }

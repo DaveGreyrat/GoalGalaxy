@@ -46,36 +46,6 @@
             android:textSize="18sp" />
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:padding="16dp"
-            android:text="Policy and FAQ"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-
-        <TextView
-            android:id="@+id/policy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Policy"
-            android:textColor="@color/first"
-            android:textSize="18sp" />
-
-
-        <TextView
-            android:id="@+id/FAQ"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="FAQ"
-            android:textColor="@color/first"
-            android:textSize="18sp" />
-
 
         <TextView
             android:layout_width="match_parent"
@@ -104,7 +74,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Delete Account"
-            android:textColor="@color/first"
+            android:textColor="@android:color/holo_red_dark"
             android:textSize="18sp" />
 
 

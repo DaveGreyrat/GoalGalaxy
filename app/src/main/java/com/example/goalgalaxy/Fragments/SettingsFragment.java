@@ -18,8 +18,6 @@ import com.example.goalgalaxy.Authentication.ChangeUsernameActivity;
 import com.example.goalgalaxy.Authentication.DeleteAccount;
 import com.example.goalgalaxy.Authentication.LoginActivity;
 import com.example.goalgalaxy.Authentication.PasswordResetActivity;
-import com.example.goalgalaxy.Fragments.Settings.FAQActivity;
-import com.example.goalgalaxy.Fragments.Settings.PolicyActivity;
 import com.example.goalgalaxy.R;
 
 public class SettingsFragment extends Fragment {
@@ -31,8 +29,6 @@ public class SettingsFragment extends Fragment {
 
         TextView changeUsernameTextView = view.findViewById(R.id.change_username);
         TextView changePasswordTextView = view.findViewById(R.id.change_password);
-        TextView policyTextView = view.findViewById(R.id.policy);
-        TextView faqTextView = view.findViewById(R.id.FAQ);
         TextView logOutTextView = view.findViewById(R.id.log_out);
         TextView deleteAccountTextView = view.findViewById(R.id.Delete_account);
 
@@ -49,20 +45,6 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(requireActivity(), PasswordResetActivity.class));
-            }
-        });
-
-        policyTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(requireActivity(), PolicyActivity.class));
-            }
-        });
-
-        faqTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(requireActivity(), FAQActivity.class));
             }
         });
 

@@ -44,7 +44,7 @@ public class PasswordResetActivity extends AppCompatActivity {
         goBackToLoginTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goBackToLogin();
+                finish();
             }
         });
     }

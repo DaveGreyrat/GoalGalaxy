@@ -1,7 +1,9 @@
 package com.example.goalgalaxy.Adapter;
 
-import android.app.Activity;
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,9 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.goalgalaxy.AddNewTask;
+import com.example.goalgalaxy.Fragments.TasksFragment;
 import com.example.goalgalaxy.MainActivity;
 import com.example.goalgalaxy.Model.ToDoModel;
 import com.example.goalgalaxy.R;
@@ -23,20 +27,27 @@ import com.example.goalgalaxy.Utils.DatabaseHandler;
 
 import java.util.List;
 import java.util.Locale;
-import android.content.Context;
-
 
 public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
 
     private List<ToDoModel> todoList;
-    private DatabaseHandler db;
-    private MainActivity activity;
+    private final DatabaseHandler db;
+    private final MainActivity activity;
+
+    private static final int VIEW_TYPE_TASK = 0;
+    private static final int VIEW_TYPE_REMINDER = 1;
+    private TasksFragment.OnTaskUpdatedListener mListener;
+
+
+    public void setOnTaskUpdatedListener(TasksFragment.OnTaskUpdatedListener listener) {
+        mListener = listener;
+    }
 
     public ToDoAdapter(DatabaseHandler db, MainActivity activity) {
         this.db = db;
         this.activity = activity;
+        this.db.openDatabase(); // Открываем базу данных один раз в конструкторе
     }
-
 
     @NonNull
     @Override
@@ -54,25 +65,25 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        db.openDatabase();
-
         final ToDoModel item = todoList.get(position);
         if (item != null) {
             holder.task.setText(item.getTask());
             holder.description.setText(item.getDescription());
+            holder.date.setText(String.format(Locale.getDefault(), "%d/%d", item.getDateM(), item.getDateD()));
+            holder.time.setText(String.format(Locale.getDefault(), "%02d:%02d", item.getTimeH(), item.getTimeM()));
             if (item.isReminder()) {
                 holder.inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", item.getDateY(), item.getDateM(), item.getDateD()));
                 holder.inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", item.getTimeH(), item.getTimeM()));
             }
+            holder.task.setOnCheckedChangeListener(null); // Отключаем слушатель перед обновлением чекбокса
             holder.task.setChecked(toBoolean(item.getStatus()));
             holder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        db.updateStatus(item.getId(), 1);
-                    } else {
-                        db.updateStatus(item.getId(), 0);
-                    }
+                    int newStatus = isChecked ? 1 : 0;
+                    db.updateStatus(item.getId(), newStatus);
+                    Intent intent = new Intent("UPDATE_DATA");
+                    LocalBroadcastManager.getInstance(holder.itemView.getContext()).sendBroadcast(intent);
                 }
             });
         } else {
@@ -80,17 +91,14 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         }
     }
 
+
     private boolean toBoolean(int n) {
         return n != 0;
     }
 
     @Override
     public int getItemCount() {
-        return todoList.size();
-    }
-
-    public Context getContext() {
-        return activity;
+        return todoList != null ? todoList.size() : 0;
     }
 
     public void setTasks(List<ToDoModel> todoList) {
@@ -105,9 +113,16 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         notifyItemRemoved(position);
     }
 
+    public void updateItem(int position, boolean isChecked) {
+        ToDoModel item = todoList.get(position);
+        item.setStatus(isChecked ? 1 : 0);
+        db.updateStatus(item.getId(), isChecked ? 1 : 0);
+        notifyItemChanged(position);
+    }
+
     public void editItem(int position) {
         ToDoModel item = todoList.get(position);
-        if (item != null) { // Проверка на наличие элемента в списке
+        if (item != null) {
             Bundle bundle = new Bundle();
             bundle.putInt("id", item.getId());
             bundle.putString("task", item.getTask());
@@ -123,17 +138,17 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         }
     }
 
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         CheckBox task;
-        TextView description;
+        TextView description, date, time;
         EditText inDate, inTime;
 
         ViewHolder(View view) {
             super(view);
             task = view.findViewById(R.id.todoCheckBox);
             description = view.findViewById(R.id.taskDescription);
+            date = view.findViewById(R.id.taskDate);
+            time = view.findViewById(R.id.taskTime);
             inDate = view.findViewById(R.id.in_date);
             inTime = view.findViewById(R.id.in_time);
         }
@@ -145,6 +160,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         return item.isReminder() ? VIEW_TYPE_REMINDER : VIEW_TYPE_TASK;
     }
 
-    private static final int VIEW_TYPE_TASK = 0;
-    private static final int VIEW_TYPE_REMINDER = 1;
+    public Context getContext() {
+        return activity; // Возвращаем контекст активности
+    }
 }

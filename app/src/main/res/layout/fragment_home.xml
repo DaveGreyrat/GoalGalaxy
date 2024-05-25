@@ -8,18 +8,6 @@
 
 
     <TextView
-        android:id="@+id/quoteText"
-        android:layout_width="wrap_content"
-        android:layout_height= "wrap_content"
-        android:text="Quote"
-        android:textSize="30dp"
-        android:layout_margin="20dp"
-        android:textAlignment="center"
-        android:background="@color/gray"/>
-
-
-
-    <TextView
         android:id="@+id/tasksText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,26 +18,32 @@
         android:layout_marginTop="16dp"
         android:textSize="32sp"
         android:text="Home"
+        />
+
+    <TextView
+        android:id="@+id/quoteText"
+        android:layout_width="wrap_content"
+        android:layout_height= "wrap_content"
+        android:text="Quote"
+        android:textSize="30dp"
+        android:layout_margin="20dp"
+        android:textAlignment="center"
+        android:background="@color/gray"
+        android:layout_below="@+id/tasksText"/>
+
+
+    <TextView
+        android:id="@+id/authorText"
+        android:layout_width="wrap_content"
+        android:layout_height= "wrap_content"
+        android:text="Authur"
+        android:textSize="20dp"
+        android:layout_marginRight="20dp"
+        android:textAlignment="center"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/quoteText"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tasksRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tasksText"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:nestedScrollingEnabled="true" />
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="32dp"
-        android:backgroundTint="@color/first"
-        android:src="@drawable/baseline_add_24"
-        />
 
 </RelativeLayout>

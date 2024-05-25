@@ -40,6 +40,8 @@ public class TodayFragment extends Fragment {
     private ToDoAdapter tasksAdapter;
     private List<ToDoModel> taskList;
     private Context context;
+    private OnTaskUpdatedListener mListener;
+    private MainActivity mActivity;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -61,19 +63,33 @@ public class TodayFragment extends Fragment {
                 ItemTouchHelper(new RecyclerItemTouchHelper(tasksAdapter));
         itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
 
-
-        taskList = db.getAllTasks();
-        Collections.reverse(taskList);
-
-        tasksAdapter.setTasks(taskList);
+        loadTodayTasks();
 
         return view;
-
-
-
     }
 
 
+    public void loadTodayTasks() {
+        taskList = db.getIncompleteTodayTasks();
+        Collections.reverse(taskList);
+        tasksAdapter.setTasks(taskList);
+    }
 
+    public interface OnTaskUpdatedListener {
+        void onTaskUpdated();
+    }
+
+    public void onTaskUpdated() {
+        // Обновите список задач в вашем фрагменте CompletedFragment
+        loadTodayTasks();
+    }
+
+    public void setOnTaskUpdatedListener(OnTaskUpdatedListener listener) {
+        mListener = listener;
+    }
+
+    public void setMainActivity(MainActivity activity) {
+        mActivity = activity;
+    }
 }
 

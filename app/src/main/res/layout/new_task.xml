@@ -5,68 +5,66 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardBackgroundColor="@android:color/transparent"
-    card_view:cardCornerRadius="10dp"
+    card_view:cardCornerRadius="0dp"
     card_view:cardElevation="0dp"
-    card_view:contentPadding="0dp">
+    card_view:contentPadding="0dp"
+    android:background="@drawable/dialog">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:padding="16dp">
+
+<EditText
+    android:id="@+id/newTaskText"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp">
+    android:background="@null"
+    android:hint="New task"
+    android:minHeight="48dp"
+    android:maxLength="22"
+    android:maxLines="1"
+    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+    android:textSize="25dp" />
 
-    <EditText
-        android:id="@+id/newTaskText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="New task"
-        android:minHeight="48dp"
-        android:maxLength="22"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textSize="25dp" />
+<EditText
+    android:id="@+id/newTaskDescription"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/newTaskText"
+    android:layout_marginTop="3dp"
+    android:background="@null"
+    android:hint="Description"
+    android:minHeight="48dp"
+    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-    <EditText
-        android:id="@+id/newTaskDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/newTaskText"
-        android:layout_marginTop="3dp"
-        android:background="@null"
-        android:hint="Description"
-        android:minHeight="48dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+<com.google.android.material.button.MaterialButton
+    android:id="@+id/reminderButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/newTaskDescription"
+    android:layout_alignParentStart="true"
+    android:backgroundTint="@color/fourth"
+    android:text="Reminder"
+    android:textColor="@color/first"
+    android:textSize="16sp"
+    app:iconTint="@color/first"
+    app:iconSize="20dp"
+    app:icon="@drawable/baseline_access_time_24"
+    app:cornerRadius="15dp"/>
 
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/reminderButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/newTaskDescription"
-        android:layout_alignParentStart="true"
-        android:backgroundTint="@color/fourth"
-
-        android:text="Reminder"
-        android:textColor="@color/first"
-        android:textSize="16sp"
-        app:iconTint="@color/first"
-        app:iconSize="20dp"
-        app:icon="@drawable/baseline_access_time_24"
-        app:cornerRadius="15dp"/>
-
-    <Button
-        android:id="@+id/newTaskButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/newTaskDescription"
-        android:textSize="16sp"
-        android:layout_alignParentEnd="true"
-        android:backgroundTint="@color/gray"
-        android:text="Save"
-        android:textAllCaps="false"
-        android:textColor="@color/darker_gray" />
+<Button
+    android:id="@+id/newTaskButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/newTaskDescription"
+    android:textSize="16sp"
+    android:layout_alignParentEnd="true"
+    android:backgroundTint="@color/gray"
+    android:text="Save"
+    android:textAllCaps="false"
+    android:textColor="@color/darker_gray" />
 
 </RelativeLayout>
-</androidx.cardview.widget.CardView>
-
+    </androidx.cardview.widget.CardView>

@@ -2,6 +2,7 @@ package com.example.goalgalaxy.Authentication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -47,7 +48,7 @@ public class ChangeUsernameActivity extends AppCompatActivity {
         goBackToSettingsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goBackToSettings();
+                finish();
             }
         });
     }
@@ -73,6 +74,13 @@ public class ChangeUsernameActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(ChangeUsernameActivity.this, "Username updated successfully", Toast.LENGTH_SHORT).show();
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                    }
+                                }, 500);
+
                             } else {
                                 Toast.makeText(ChangeUsernameActivity.this, "Failed to update username", Toast.LENGTH_SHORT).show();
                             }
