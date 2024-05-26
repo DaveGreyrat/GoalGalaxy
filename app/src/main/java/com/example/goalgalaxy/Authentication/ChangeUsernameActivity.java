@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,8 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.goalgalaxy.Fragments.SettingsFragment;
 import com.example.goalgalaxy.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -74,9 +75,13 @@ public class ChangeUsernameActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(ChangeUsernameActivity.this, "Username updated successfully", Toast.LENGTH_SHORT).show();
+
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Intent intent = new Intent("UPDATE_USERNAME");
+                                        LocalBroadcastManager.getInstance(ChangeUsernameActivity.this).sendBroadcast(intent);
+                                        Log.d("ChangeUsernameActivity", "Broadcast UPDATE_USERNAME sent");
                                         finish();
                                     }
                                 }, 500);
@@ -87,11 +92,5 @@ public class ChangeUsernameActivity extends AppCompatActivity {
                         }
                     });
         }
-    }
-
-    private void goBackToSettings() {
-        Intent intent = new Intent(this, SettingsFragment.class);
-        startActivity(intent);
-        finish();
     }
 }

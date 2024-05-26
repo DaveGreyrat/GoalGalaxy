@@ -16,6 +16,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.goalgalaxy.Authentication.LoginActivity;
@@ -27,6 +29,7 @@ import com.example.goalgalaxy.Fragments.TasksFragment;
 import com.example.goalgalaxy.Fragments.TodayFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -43,12 +46,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        updateNavigationHeader();
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(updateReceiver, new IntentFilter("UPDATE_DATA"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(updateUsernameReceiver, new IntentFilter("UPDATE_USERNAME"));
+        Log.d("MainActivity", "onCreate: Registered updateReceiver and updateUsernameReceiver");
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -56,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
 
-        if(itemId==R.id.nav_home){
+        if (itemId == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         } else if (itemId == R.id.nav_today) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TodayFragment()).commit();
@@ -89,6 +96,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         editor.apply();
     }
 
+    private void updateNavigationHeader() {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView usernameTextView = headerView.findViewById(R.id.nav_header_username);
+        TextView emailTextView = headerView.findViewById(R.id.nav_header_email);
+
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null) {
+            String username = currentUser.getDisplayName();
+            String email = currentUser.getEmail();
+
+            if (username != null && !username.isEmpty()) {
+                usernameTextView.setText(username);
+            } else {
+                usernameTextView.setText("Username"); // Default text if username is null
+            }
+            if (email != null && !email.isEmpty()) {
+                emailTextView.setText(email);
+            } else {
+                emailTextView.setText("email@example.com"); // Default text if email is null
+            }
+        }
+
+        Log.d("MainActivity", "Update navigation drawer");
+    }
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -99,15 +132,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(updateReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(updateUsernameReceiver);
+        Log.d("MainActivity", "onDestroy: Unregistered updateReceiver and updateUsernameReceiver");
+    }
+
+
+    @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(updateReceiver, new IntentFilter("UPDATE_DATA"));
+        Log.d("MainActivity", "onResume: Activity resumed");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(updateReceiver);
+        Log.d("MainActivity", "onPause: Activity paused");
     }
 
     private final BroadcastReceiver updateReceiver = new BroadcastReceiver() {
@@ -132,6 +174,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
-
+    // Новый ресивер для обновления никнейма
+    private final BroadcastReceiver updateUsernameReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("UPDATE_USERNAME".equals(intent.getAction())) {
+                Log.d("MainActivity", "Received UPDATE_USERNAME broadcast");
+                updateNavigationHeader();
+            } else {
+                Log.d("MainActivity", "Received unknown broadcast: " + intent.getAction());
+            }
+        }
+    };
 
 }

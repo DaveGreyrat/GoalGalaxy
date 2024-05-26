@@ -16,6 +16,7 @@
 
 
     <TextView
+        android:id="@+id/nav_header_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Davit"
@@ -23,6 +24,7 @@
         android:textStyle="bold"/>
 
     <TextView
+        android:id="@+id/nav_header_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="davit.hovhannisyan2009@gmail.com"
