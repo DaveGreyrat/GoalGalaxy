@@ -35,7 +35,7 @@
                 android:layout_width="300dp"
                 android:layout_height="50dp"
                 android:text="Please check your inbox for the verification link"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:layout_gravity="center"
                 android:textAlignment="center"/>
 
