@@ -36,7 +36,7 @@
         android:id="@+id/authorText"
         android:layout_width="wrap_content"
         android:layout_height= "wrap_content"
-        android:text="Authur"
+        android:text="Author"
         android:textSize="20dp"
         android:layout_marginRight="20dp"
         android:textAlignment="center"

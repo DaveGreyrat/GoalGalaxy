@@ -110,12 +110,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (username != null && !username.isEmpty()) {
                 usernameTextView.setText(username);
             } else {
-                usernameTextView.setText("Username"); // Default text if username is null
+                usernameTextView.setText("Username");
             }
             if (email != null && !email.isEmpty()) {
                 emailTextView.setText(email);
             } else {
-                emailTextView.setText("email@example.com"); // Default text if email is null
+                emailTextView.setText("email@example.com");
             }
         }
 
@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
-    // Новый ресивер для обновления никнейма
     private final BroadcastReceiver updateUsernameReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

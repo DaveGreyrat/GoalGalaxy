@@ -74,7 +74,6 @@ public class TodayFragment extends Fragment {
     }
 
     public void onTaskUpdated() {
-        // Обновите список задач в вашем фрагменте CompletedFragment
         loadTodayTasks();
     }
 

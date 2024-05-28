@@ -78,7 +78,6 @@ public class CompletedFragment extends Fragment {
     }
 
     public void onTaskUpdated() {
-        // Обновите список задач в вашем фрагменте CompletedFragment
         loadCompletedTasks();
     }
 

@@ -39,9 +39,6 @@
                 android:layout_gravity="center"
                 android:textAlignment="center"/>
 
-
-
-
         </LinearLayout>
 
 

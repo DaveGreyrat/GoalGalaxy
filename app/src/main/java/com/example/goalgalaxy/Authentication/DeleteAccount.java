@@ -37,7 +37,7 @@ public class DeleteAccount extends AppCompatActivity {
         goBackTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish(); // Go back to the previous activity
+                finish();
             }
         });
     }
@@ -51,7 +51,7 @@ public class DeleteAccount extends AppCompatActivity {
                             Toast.makeText(DeleteAccount.this, "Account deleted successfully", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(DeleteAccount.this, LoginActivity.class);
                             startActivity(intent);
-                            finish(); // Close the current activity
+                            finish();
                         } else {
                             Toast.makeText(DeleteAccount.this, "Failed to delete account", Toast.LENGTH_SHORT).show();
                         }

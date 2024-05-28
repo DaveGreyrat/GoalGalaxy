@@ -3,7 +3,6 @@ package com.example.goalgalaxy.Model;
 public class ToDoModel {
     private int id, status, year, month, day, hour, minute;
     private String task, description;
-    private String firebaseId;
     private boolean isReminder;
 
     public ToDoModel() {
@@ -112,11 +111,4 @@ public class ToDoModel {
         isReminder = reminder;
     }
 
-    public String getFirebaseId() {
-        return firebaseId;
-    }
-
-    public void setFirebaseId(String firebaseId) {
-        this.firebaseId = firebaseId;
-    }
 }

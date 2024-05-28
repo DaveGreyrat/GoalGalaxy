@@ -44,9 +44,6 @@
                 android:textSize="15dp"
                 />
 
-
-
-
             <EditText
                 android:id="@+id/current_email"
                 android:layout_width="match_parent"

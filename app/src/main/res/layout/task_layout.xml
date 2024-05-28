@@ -24,7 +24,7 @@
             android:textSize="20dp"
             android:paddingStart="4dp"
             app:buttonTint="@color/first"
-            tools:text="Market"/>
+            tools:text="Task name"/>
 
         <TextView
             android:id="@+id/taskDescription"
@@ -34,7 +34,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginTop="-10dp"
             android:layout_marginStart="37dp"
-            android:text="Go to the market and bring vegetables" />
+            android:text="Task description" />
 
         <View
             android:layout_width="2dp"

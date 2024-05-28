@@ -65,14 +65,13 @@ public class HomeFragment extends Fragment implements DialogCloseListener {
         dateTimePicker.setContext(requireContext());
 
 
-        // Initialize TextView and Button
         quoteText = view.findViewById(R.id.quoteText);
         authorText = view.findViewById(R.id.authorText);
 
-        // Заполняем карту цитатами и именами авторов
+
         fillQuotesByAuthors();
 
-        // Устанавливаем случайную цитату
+
         setRandomQuote();
 
 
@@ -98,7 +97,7 @@ public class HomeFragment extends Fragment implements DialogCloseListener {
 
 
     private static void fillQuotesByAuthors() {
-        // Добавляем цитаты с именами авторов
+
         quotesByAuthors.put("Steve Jobs", Arrays.asList(
                 "The only way to do great work is to love what you do.",
                 "Your time is limited, don't waste it living someone else's life."
@@ -271,20 +270,16 @@ public class HomeFragment extends Fragment implements DialogCloseListener {
 
 
         private void setRandomQuote() {
-        // Получаем список всех имен авторов
+
         List<String> authors = new ArrayList<>(quotesByAuthors.keySet());
 
-        // Получаем случайного автора
         Random random = new Random();
         String randomAuthor = authors.get(random.nextInt(authors.size()));
 
-        // Получаем цитаты этого автора
         List<String> quotes = quotesByAuthors.get(randomAuthor);
 
-        // Получаем случайную цитату
         String randomQuote = quotes.get(random.nextInt(quotes.size()));
 
-        // Устанавливаем случайную цитату и имя автора в TextView
         quoteText.setText(randomQuote);
         authorText.setText("- " + randomAuthor);
     }

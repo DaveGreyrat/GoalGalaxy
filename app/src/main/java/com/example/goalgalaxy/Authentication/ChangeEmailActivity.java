@@ -40,7 +40,6 @@ public class ChangeEmailActivity extends AppCompatActivity {
         goBackTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Go back to SettingsFragment
                 onBackPressed();
             }
         });
@@ -60,12 +59,8 @@ public class ChangeEmailActivity extends AppCompatActivity {
             user.updateEmail(newEmail)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Email updated successfully
                             Toast.makeText(ChangeEmailActivity.this, "Email change link sent to your current email address. Please check your email.", Toast.LENGTH_SHORT).show();
-                            // Redirect user to change their email after verification
-                            // You can handle this based on your app's flow, possibly by opening another activity
                         } else {
-                            // Error updating email
                             Toast.makeText(ChangeEmailActivity.this, "Failed to update email: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });

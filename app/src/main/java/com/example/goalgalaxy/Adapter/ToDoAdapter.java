@@ -44,7 +44,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
     public ToDoAdapter(DatabaseHandler db, MainActivity activity) {
         this.db = db;
         this.activity = activity;
-        this.db.openDatabase(); // Открываем базу данных один раз в конструкторе
+        this.db.openDatabase();
     }
 
     @NonNull
@@ -73,7 +73,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
                 holder.inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", item.getYear(), item.getMonth(), item.getDay()));
                 holder.inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", item.getHour(), item.getMinute()));
             }
-            holder.task.setOnCheckedChangeListener(null); // Отключаем слушатель перед обновлением чекбокса
+            holder.task.setOnCheckedChangeListener(null);
             holder.task.setChecked(toBoolean(item.getStatus()));
             holder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -107,7 +107,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
     public void deleteItem(int position) {
         ToDoModel item = todoList.get(position);
         if (item != null) {
-            db.deleteTask(item.getId()); // Удаляем задачу по ее идентификатору
+            db.deleteTask(item.getId());
             todoList.remove(position);
             notifyItemRemoved(position);
         } else {
@@ -164,6 +164,6 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
     }
 
     public Context getContext() {
-        return activity; // Возвращаем контекст активности
+        return activity; 
     }
 }

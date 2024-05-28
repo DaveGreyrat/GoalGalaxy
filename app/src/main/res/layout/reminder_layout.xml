@@ -80,7 +80,6 @@
             app:layout_constraintTop_toTopOf="@+id/in_time"
             android:backgroundTint="@color/third"/>
 
-        <!-- Добавлена кнопка "ОК" в том же ConstraintLayout -->
         <Button
             android:id="@+id/btn_ok"
             android:layout_width="wrap_content"

@@ -98,7 +98,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
             Hour = bundle.getInt("hour");
             Minute = bundle.getInt("minute");
         } else {
-            // Initialize date and time to current values if it's a new task
             Calendar calendar = Calendar.getInstance();
             Year = calendar.get(Calendar.YEAR);
             Month = calendar.get(Calendar.MONTH);
@@ -110,7 +109,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
 
 
-        // Add TextWatcher for both fields
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
