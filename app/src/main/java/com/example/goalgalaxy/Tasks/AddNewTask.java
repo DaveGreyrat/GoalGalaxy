@@ -1,10 +1,9 @@
-package com.example.goalgalaxy;
+package com.example.goalgalaxy.Tasks;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,8 +20,10 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.goalgalaxy.DialogCloseListener;
 import com.example.goalgalaxy.Fragments.TasksFragment;
 import com.example.goalgalaxy.Model.ToDoModel;
+import com.example.goalgalaxy.R;
 import com.example.goalgalaxy.Utils.DatabaseHandler;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -78,9 +79,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        newTaskText = view.findViewById(R.id.newTaskText);
-        newTaskDescription = view.findViewById(R.id.newTaskDescription);
-        newTaskSaveButton = view.findViewById(R.id.newTaskButton);
+        newTaskText = view.findViewById(R.id.newGoalText);
+        newTaskDescription = view.findViewById(R.id.newGoalDescription);
+        newTaskSaveButton = view.findViewById(R.id.newGoalButton);
         reminder = view.findViewById(R.id.reminderButton);
 
         db = new DatabaseHandler(getActivity());
@@ -92,7 +93,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
             newTaskText.setText(bundle.getString("task"));
             newTaskDescription.setText(bundle.getString("description"));
             Year = bundle.getInt("year");
-            Month = bundle.getInt("month");
+            Month = bundle.getInt("month") - 1;
             Day = bundle.getInt("day");
             Hour = bundle.getInt("hour");
             Minute = bundle.getInt("minute");
@@ -100,7 +101,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
             // Initialize date and time to current values if it's a new task
             Calendar calendar = Calendar.getInstance();
             Year = calendar.get(Calendar.YEAR);
-            Month = calendar.get(Calendar.MONTH) + 1;
+            Month = calendar.get(Calendar.MONTH);
             Day = calendar.get(Calendar.DAY_OF_MONTH);
             Hour = calendar.get(Calendar.HOUR_OF_DAY);
             Minute = calendar.get(Calendar.MINUTE);
@@ -151,7 +152,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 });
                 // Передайте сохраненное время в DateTimePicker перед открытием его диалогового окна
 
-                dateTimePickerFragment.setDefaultDateTime(Year, Month - 1, Day, Hour, Minute);
+                dateTimePickerFragment.setDefaultDateTime(Year, Month, Day, Hour, Minute);
 
                 dateTimePickerFragment.show(getChildFragmentManager(), "dateTimePicker");
 
@@ -172,11 +173,11 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     ToDoModel task = new ToDoModel();
                     task.setTask(text);
                     task.setDescription(description);
-                    task.setDateY(Year);
-                    task.setDateM(Month);
-                    task.setDateD(Day);
-                    task.setTimeH(Hour);
-                    task.setTimeM(Minute);
+                    task.setYear(Year);
+                    task.setMonth(Month+1);
+                    task.setDay(Day);
+                    task.setHour(Hour);
+                    task.setMinute(Minute);
                     task.setStatus(0);
                     db.insertTask(task);
                 }
@@ -222,14 +223,11 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
 
     private void updateDateTime(int year, int month, int day, int hour, int minute) {
-        // Здесь вы можете сохранить выбранную дату и время в вашем фрагменте AddNewTask
         Year = year;
         Month = month;
         Day = day;
         Hour = hour;
         Minute = minute;
-
-        // Затем вы можете использовать эти данные, как вам угодно
     }
 
 

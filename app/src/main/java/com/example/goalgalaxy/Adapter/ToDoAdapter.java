@@ -1,7 +1,5 @@
 package com.example.goalgalaxy.Adapter;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.goalgalaxy.AddNewTask;
+import com.example.goalgalaxy.Tasks.AddNewTask;
 import com.example.goalgalaxy.Fragments.TasksFragment;
 import com.example.goalgalaxy.MainActivity;
 import com.example.goalgalaxy.Model.ToDoModel;
@@ -69,11 +67,11 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         if (item != null) {
             holder.task.setText(item.getTask());
             holder.description.setText(item.getDescription());
-            holder.date.setText(String.format(Locale.getDefault(), "%d/%d", item.getDateM(), item.getDateD()));
-            holder.time.setText(String.format(Locale.getDefault(), "%02d:%02d", item.getTimeH(), item.getTimeM()));
+            holder.date.setText(String.format(Locale.getDefault(), "%d/%d", item.getMonth(), item.getDay()));
+            holder.time.setText(String.format(Locale.getDefault(), "%02d:%02d", item.getHour(), item.getMinute()));
             if (item.isReminder()) {
-                holder.inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", item.getDateY(), item.getDateM(), item.getDateD()));
-                holder.inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", item.getTimeH(), item.getTimeM()));
+                holder.inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", item.getYear(), item.getMonth(), item.getDay()));
+                holder.inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", item.getHour(), item.getMinute()));
             }
             holder.task.setOnCheckedChangeListener(null); // Отключаем слушатель перед обновлением чекбокса
             holder.task.setChecked(toBoolean(item.getStatus()));
@@ -108,10 +106,15 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
 
     public void deleteItem(int position) {
         ToDoModel item = todoList.get(position);
-        db.deleteTask(item.getId());
-        todoList.remove(position);
-        notifyItemRemoved(position);
+        if (item != null) {
+            db.deleteTask(item.getId()); // Удаляем задачу по ее идентификатору
+            todoList.remove(position);
+            notifyItemRemoved(position);
+        } else {
+            Log.e("ToDoAdapter", "Task at position " + position + " is null");
+        }
     }
+
 
     public void updateItem(int position, boolean isChecked) {
         ToDoModel item = todoList.get(position);
@@ -127,11 +130,11 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
             bundle.putInt("id", item.getId());
             bundle.putString("task", item.getTask());
             bundle.putString("description", item.getDescription());
-            bundle.putInt("year", item.getDateY());
-            bundle.putInt("month", item.getDateM());
-            bundle.putInt("day", item.getDateD());
-            bundle.putInt("hour", item.getTimeH());
-            bundle.putInt("minute", item.getTimeM());
+            bundle.putInt("year", item.getYear());
+            bundle.putInt("month", item.getMonth());
+            bundle.putInt("day", item.getDay());
+            bundle.putInt("hour", item.getHour());
+            bundle.putInt("minute", item.getMinute());
             AddNewTask fragment = new AddNewTask();
             fragment.setArguments(bundle);
             fragment.show(activity.getSupportFragmentManager(), AddNewTask.TAG);

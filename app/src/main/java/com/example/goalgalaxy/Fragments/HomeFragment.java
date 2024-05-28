@@ -1,8 +1,6 @@
 package com.example.goalgalaxy.Fragments;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -17,13 +15,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.goalgalaxy.Adapter.ToDoAdapter;
-import com.example.goalgalaxy.AddNewTask;
-import com.example.goalgalaxy.DateTimePicker;
+import com.example.goalgalaxy.Tasks.DateTimePicker;
 import com.example.goalgalaxy.DialogCloseListener;
-import com.example.goalgalaxy.MainActivity;
 import com.example.goalgalaxy.Model.ToDoModel;
 import com.example.goalgalaxy.R;
-import com.example.goalgalaxy.RecyclerItemTouchHelper;
 import com.example.goalgalaxy.Utils.DatabaseHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

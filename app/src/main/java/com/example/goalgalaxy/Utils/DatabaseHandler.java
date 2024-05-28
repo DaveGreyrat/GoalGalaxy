@@ -6,18 +6,26 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.example.goalgalaxy.Model.ToDoModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import android.util.Log;
 import java.util.List;
-import java.util.Locale;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "toDoListDatabase";
     private static final String TODO_TABLE = "todo";
@@ -42,9 +50,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             + STATUS + " INTEGER)";
 
     private SQLiteDatabase db;
+    private DatabaseReference databaseReference;
+    private FirebaseUser currentUser;
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            databaseReference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid()).child("tasks");
+        }
     }
 
     @Override
@@ -59,25 +74,44 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void openDatabase() {
-        db = this.getWritableDatabase();
+        if (db == null || !db.isOpen()) {
+            db = this.getWritableDatabase();
+        }
     }
 
-    public void insertTask(ToDoModel task){
+    private void closeDatabase() {
+        if (db != null && db.isOpen()) {
+            db.close();
+        }
+    }
+
+    public void insertTask(ToDoModel task, boolean syncWithFirebase) {
+        openDatabase();
         ContentValues cv = new ContentValues();
         cv.put(TASK, task.getTask());
         cv.put(DESCRIPTION, task.getDescription());
-        cv.put(YEAR, task.getDateY());
-        cv.put(MONTH, task.getDateM());
-        cv.put(DAY, task.getDateD());
-        cv.put(HOUR, task.getTimeH());
-        cv.put(MINUTE, task.getTimeM());
-        cv.put(STATUS, 0);
-        db.insert(TODO_TABLE, null, cv);
+        cv.put(YEAR, task.getYear());
+        cv.put(MONTH, task.getMonth());
+        cv.put(DAY, task.getDay());
+        cv.put(HOUR, task.getHour());
+        cv.put(MINUTE, task.getMinute());
+        cv.put(STATUS, task.getStatus());
+        long id = db.insert(TODO_TABLE, null, cv);
+        task.setId((int) id); // Устанавливаем ID задачи на вновь вставленный ID
+        if (syncWithFirebase) {
+            syncTaskToFirebase(task);
+        }
+        closeDatabase();
+    }
+
+    public void insertTask(ToDoModel task) {
+        insertTask(task, true);
     }
 
     @SuppressLint("Range")
-    public List<ToDoModel> getAllTasks(){
+    public List<ToDoModel> getAllTasks() {
         List<ToDoModel> taskList = new ArrayList<>();
+        openDatabase();
         Cursor cur = null;
         try {
             cur = db.query(TODO_TABLE, null, null, null, null, null, null);
@@ -87,31 +121,39 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     task.setId(cur.getInt(cur.getColumnIndex(ID)));
                     task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                     task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
-                    task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
-                    task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
-                    task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
-                    task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
-                    task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
+                    task.setYear(cur.getInt(cur.getColumnIndex(YEAR)));
+                    task.setMonth(cur.getInt(cur.getColumnIndex(MONTH)));
+                    task.setDay(cur.getInt(cur.getColumnIndex(DAY)));
+                    task.setHour(cur.getInt(cur.getColumnIndex(HOUR)));
+                    task.setMinute(cur.getInt(cur.getColumnIndex(MINUTE)));
                     task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
                     taskList.add(task);
-                } while(cur.moveToNext());
+                } while (cur.moveToNext());
             }
         } finally {
             if (cur != null) {
                 cur.close();
             }
+            closeDatabase();
         }
         return taskList;
     }
 
-    public void updateStatus(int id, int status){
+    public void updateStatus(int id, int status) {
+        openDatabase();
         ContentValues cv = new ContentValues();
         cv.put(STATUS, status);
-        int rowsAffected = db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+        int rowsAffected = db.update(TODO_TABLE, cv, ID + "= ?", new String[]{String.valueOf(id)});
+        if (rowsAffected > 0) {
+            syncTaskStatusToFirebase(id, status); // Синхронизируем обновление статуса с Firebase
+        }
         Log.d("DatabaseHandler", "Rows affected by updateStatus(): " + rowsAffected);
+        closeDatabase();
     }
 
+
     public void updateTask(int id, String task, String description, int dateY, int dateM, int dateD, int timeH, int timeM) {
+        openDatabase();
         ContentValues cv = new ContentValues();
         cv.put(TASK, task);
         cv.put(DESCRIPTION, description);
@@ -120,16 +162,137 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cv.put(DAY, dateD);
         cv.put(HOUR, timeH);
         cv.put(MINUTE, timeM);
-        db.update(TODO_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+        int rowsAffected = db.update(TODO_TABLE, cv, ID + "= ?", new String[]{String.valueOf(id)});
+        if (rowsAffected > 0) {
+            syncTaskToFirebase(new ToDoModel(id, task, description, dateY, dateM, dateD, timeH, timeM, 0)); // Sync the task update to Firebase
+        }
+        closeDatabase();
     }
 
-    public void deleteTask(int id){
-        db.delete(TODO_TABLE, ID + "= ?", new String[] {String.valueOf(id)});
+    public void deleteTask(int id) {
+        openDatabase();
+        int rowsAffected = db.delete(TODO_TABLE, ID + "= ?", new String[]{String.valueOf(id)});
+        if (rowsAffected > 0) {
+            deleteTaskFromFirebase(id); // Удаляем задачу из Firebase
+        }
+        Log.d("DatabaseHandler", "Rows affected by deleteTask(): " + rowsAffected);
+        closeDatabase();
     }
+
+    private void syncTaskToFirebase(ToDoModel task) {
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference userTasksRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("tasks");
+            userTasksRef.child(String.valueOf(task.getId())).setValue(task);
+        }
+    }
+
+    private void syncTaskStatusToFirebase(int id, int status) {
+        if (currentUser != null) {
+            // Получаем задачу из локальной базы данных по id
+            ToDoModel task = getTaskById(id);
+            if (task != null) {
+                // Обновляем статус задачи
+                task.setStatus(status);
+                // Отправляем обновленную задачу на сервер
+                databaseReference.child(String.valueOf(id)).setValue(task)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("DatabaseHandler", "Task status successfully updated in Firebase");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("DatabaseHandler", "Error updating task status in Firebase", e);
+                            }
+                        });
+            }
+        }
+    }
+
+    // Новый метод для получения задачи по id из локальной базы данных
+    @SuppressLint("Range")
+    private ToDoModel getTaskById(int id) {
+        openDatabase();
+        ToDoModel task = null;
+        Cursor cur = null;
+        try {
+            cur = db.query(TODO_TABLE, null, ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
+            if (cur != null && cur.moveToFirst()) {
+                task = new ToDoModel();
+                task.setId(cur.getInt(cur.getColumnIndex(ID)));
+                task.setTask(cur.getString(cur.getColumnIndex(TASK)));
+                task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
+                task.setYear(cur.getInt(cur.getColumnIndex(YEAR)));
+                task.setMonth(cur.getInt(cur.getColumnIndex(MONTH)));
+                task.setDay(cur.getInt(cur.getColumnIndex(DAY)));
+                task.setHour(cur.getInt(cur.getColumnIndex(HOUR)));
+                task.setMinute(cur.getInt(cur.getColumnIndex(MINUTE)));
+                task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
+            }
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
+            closeDatabase();
+        }
+        return task;
+    }
+
+
+    private void deleteTaskFromFirebase(int id) {
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference userTasksRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("tasks");
+            userTasksRef.child(String.valueOf(id)).removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("DatabaseHandler", "Task successfully deleted from Firebase");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("DatabaseHandler", "Error deleting task from Firebase", e);
+                        }
+                    });
+        }
+    }
+
+    public void syncFromFirebase() {
+        if (currentUser == null) return;
+
+        String userId = currentUser.getUid();
+        DatabaseReference userTasksRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("tasks");
+
+        // Загружаем данные из Firebase и синхронизируем их с локальной базой данных
+        userTasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                clearLocalDatabase(); // Очищаем локальную базу данных перед синхронизацией
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    ToDoModel task = snapshot.getValue(ToDoModel.class);
+                    if (task != null) {
+                        insertTask(task, false); // Вставляем задачи без синхронизации с Firebase
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("DatabaseHandler", "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
 
     @SuppressLint("Range")
     public List<ToDoModel> getIncompleteTodayTasks() {
         List<ToDoModel> taskList = new ArrayList<>();
+        openDatabase();
         Cursor cur = null;
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -145,11 +308,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     task.setId(cur.getInt(cur.getColumnIndex(ID)));
                     task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                     task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
-                    task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
-                    task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
-                    task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
-                    task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
-                    task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
+                    task.setYear(cur.getInt(cur.getColumnIndex(YEAR)));
+                    task.setMonth(cur.getInt(cur.getColumnIndex(MONTH)));
+                    task.setDay(cur.getInt(cur.getColumnIndex(DAY)));
+                    task.setHour(cur.getInt(cur.getColumnIndex(HOUR)));
+                    task.setMinute(cur.getInt(cur.getColumnIndex(MINUTE)));
                     task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
                     taskList.add(task);
                 } while (cur.moveToNext());
@@ -158,6 +321,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             if (cur != null) {
                 cur.close();
             }
+            closeDatabase();
         }
         return taskList;
     }
@@ -165,6 +329,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @SuppressLint("Range")
     public List<ToDoModel> getIncompleteTasks() {
         List<ToDoModel> taskList = new ArrayList<>();
+        openDatabase();
         Cursor cur = null;
 
         try {
@@ -176,11 +341,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     task.setId(cur.getInt(cur.getColumnIndex(ID)));
                     task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                     task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
-                    task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
-                    task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
-                    task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
-                    task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
-                    task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
+                    task.setYear(cur.getInt(cur.getColumnIndex(YEAR)));
+                    task.setMonth(cur.getInt(cur.getColumnIndex(MONTH)));
+                    task.setDay(cur.getInt(cur.getColumnIndex(DAY)));
+                    task.setHour(cur.getInt(cur.getColumnIndex(HOUR)));
+                    task.setMinute(cur.getInt(cur.getColumnIndex(MINUTE)));
                     task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
                     taskList.add(task);
                 } while (cur.moveToNext());
@@ -189,6 +354,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             if (cur != null) {
                 cur.close();
             }
+            closeDatabase();
         }
         return taskList;
     }
@@ -196,6 +362,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @SuppressLint("Range")
     public List<ToDoModel> getCompletedTasks() {
         List<ToDoModel> taskList = new ArrayList<>();
+        openDatabase();
         Cursor cur = null;
 
         try {
@@ -207,11 +374,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     task.setId(cur.getInt(cur.getColumnIndex(ID)));
                     task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                     task.setDescription(cur.getString(cur.getColumnIndex(DESCRIPTION)));
-                    task.setDateY(cur.getInt(cur.getColumnIndex(YEAR)));
-                    task.setDateM(cur.getInt(cur.getColumnIndex(MONTH)));
-                    task.setDateD(cur.getInt(cur.getColumnIndex(DAY)));
-                    task.setTimeH(cur.getInt(cur.getColumnIndex(HOUR)));
-                    task.setTimeM(cur.getInt(cur.getColumnIndex(MINUTE)));
+                    task.setYear(cur.getInt(cur.getColumnIndex(YEAR)));
+                    task.setMonth(cur.getInt(cur.getColumnIndex(MONTH)));
+                    task.setDay(cur.getInt(cur.getColumnIndex(DAY)));
+                    task.setHour(cur.getInt(cur.getColumnIndex(HOUR)));
+                    task.setMinute(cur.getInt(cur.getColumnIndex(MINUTE)));
                     task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
                     taskList.add(task);
                 } while (cur.moveToNext());
@@ -220,8 +387,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             if (cur != null) {
                 cur.close();
             }
+            closeDatabase();
         }
         return taskList;
     }
 
+    public void clearLocalDatabase() {
+        openDatabase();
+        db.delete(TODO_TABLE, null, null);
+        closeDatabase();
+    }
 }

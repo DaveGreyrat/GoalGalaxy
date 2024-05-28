@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.goalgalaxy.MainActivity;
 import com.example.goalgalaxy.R;
+import com.example.goalgalaxy.Utils.DatabaseHandler;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -96,7 +97,34 @@ public class LoginActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
+
                                         if (auth.getCurrentUser().isEmailVerified()) {
+                                            auth.signInWithEmailAndPassword(email, pass)
+                                                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                                        @Override
+                                                        public void onSuccess(AuthResult authResult) {
+                                                            if (auth.getCurrentUser().isEmailVerified()) {
+                                                                Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                                                if (remember.isChecked()) {
+                                                                    saveCredentials(email, pass);
+                                                                }
+                                                                // Очистка локальной базы данных перед загрузкой задач текущего пользователя
+                                                                new DatabaseHandler(LoginActivity.this).clearLocalDatabase();
+                                                                // Загрузка задач текущего пользователя из Firebase
+                                                                new DatabaseHandler(LoginActivity.this).syncFromFirebase();
+                                                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                                                finish();
+                                                            } else {
+                                                                Toast.makeText(LoginActivity.this, "Email not verified", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+
                                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                             if (remember.isChecked()) {
                                                 saveCredentials(email, pass);

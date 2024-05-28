@@ -2,13 +2,10 @@ package com.example.goalgalaxy.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,15 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.goalgalaxy.Adapter.ToDoAdapter;
-import com.example.goalgalaxy.AddNewTask;
 import com.example.goalgalaxy.MainActivity;
 import com.example.goalgalaxy.Model.ToDoModel;
 import com.example.goalgalaxy.R;
 import com.example.goalgalaxy.RecyclerItemTouchHelper;
 import com.example.goalgalaxy.Utils.DatabaseHandler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

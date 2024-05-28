@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.goalgalaxy.Adapter.ToDoAdapter;
-import com.example.goalgalaxy.AddNewTask;
+import com.example.goalgalaxy.Tasks.AddNewTask;
 import com.example.goalgalaxy.MainActivity;
 import com.example.goalgalaxy.Model.ToDoModel;
 import com.example.goalgalaxy.R;

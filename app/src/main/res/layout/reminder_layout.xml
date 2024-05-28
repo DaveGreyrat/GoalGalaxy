@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
     android:padding="20dp"
-    tools:context=".DateTimePicker"
+    tools:context=".Tasks.DateTimePicker"
     >
 
 

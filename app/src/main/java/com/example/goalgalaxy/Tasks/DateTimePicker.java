@@ -1,4 +1,4 @@
-package com.example.goalgalaxy;
+package com.example.goalgalaxy.Tasks;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -21,6 +21,9 @@ import android.widget.TimePicker;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.example.goalgalaxy.DialogCloseListener;
+import com.example.goalgalaxy.R;
 
 import java.util.Calendar;
 import java.util.Locale;

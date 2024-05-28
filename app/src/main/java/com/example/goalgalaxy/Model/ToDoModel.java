@@ -1,11 +1,25 @@
 package com.example.goalgalaxy.Model;
 
-import java.util.Date;
-
 public class ToDoModel {
-    private int id, status, dateY, dateM, dateD, timeH, timeM;
+    private int id, status, year, month, day, hour, minute;
     private String task, description;
+    private String firebaseId;
     private boolean isReminder;
+
+    public ToDoModel() {
+    }
+
+    public ToDoModel(int id, String task, String description, int year, int month, int day, int hour, int minute, int status) {
+        this.id = id;
+        this.task = task;
+        this.description = description;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hour = hour;
+        this.minute = minute;
+        this.status = status;
+    }
 
 
     public int getId() {
@@ -45,48 +59,48 @@ public class ToDoModel {
     }
 
 
-    public int getDateY() {
-        return dateY;
+    public int getYear() {
+        return year;
     }
 
-    public void setDateY(int dateY) {
-        this.dateY = dateY;
-    }
-
-
-    public int getDateM() {
-        return dateM;
-    }
-
-    public void setDateM(int dateM) {
-        this.dateM = dateM;
+    public void setYear(int year) {
+        this.year = year;
     }
 
 
-    public int getDateD() {
-        return dateD;
+    public int getMonth() {
+        return month;
     }
 
-    public void setDateD(int dateD) {
-        this.dateD = dateD;
-    }
-
-
-    public int getTimeH() {
-        return timeH;
-    }
-
-    public void setTimeH(int timeH) {
-        this.timeH = timeH;
+    public void setMonth(int month) {
+        this.month = month;
     }
 
 
-    public int getTimeM() {
-        return timeM;
+    public int getDay() {
+        return day;
     }
 
-    public void setTimeM(int timeM) {
-        this.timeM = timeM;
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+
+    public int getHour() {
+        return hour;
+    }
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
     }
 
 
@@ -96,5 +110,13 @@ public class ToDoModel {
 
     public void setReminder(boolean reminder) {
         isReminder = reminder;
+    }
+
+    public String getFirebaseId() {
+        return firebaseId;
+    }
+
+    public void setFirebaseId(String firebaseId) {
+        this.firebaseId = firebaseId;
     }
 }

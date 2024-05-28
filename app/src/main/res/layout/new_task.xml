@@ -17,7 +17,7 @@ android:layout_height="wrap_content"
 android:padding="16dp">
 
 <EditText
-    android:id="@+id/newTaskText"
+    android:id="@+id/newGoalText"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@null"
@@ -29,10 +29,10 @@ android:padding="16dp">
     android:textSize="25dp" />
 
 <EditText
-    android:id="@+id/newTaskDescription"
+    android:id="@+id/newGoalDescription"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/newTaskText"
+    android:layout_below="@+id/newGoalText"
     android:layout_marginTop="3dp"
     android:background="@null"
     android:hint="Description"
@@ -43,7 +43,7 @@ android:padding="16dp">
     android:id="@+id/reminderButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/newTaskDescription"
+    android:layout_below="@+id/newGoalDescription"
     android:layout_alignParentStart="true"
     android:backgroundTint="@color/fourth"
     android:text="Reminder"
@@ -55,10 +55,10 @@ android:padding="16dp">
     app:cornerRadius="15dp"/>
 
 <Button
-    android:id="@+id/newTaskButton"
+    android:id="@+id/newGoalButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_below="@id/newTaskDescription"
+    android:layout_below="@id/newGoalDescription"
     android:textSize="16sp"
     android:layout_alignParentEnd="true"
     android:backgroundTint="@color/gray"
