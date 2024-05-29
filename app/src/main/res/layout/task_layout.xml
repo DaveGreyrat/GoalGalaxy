@@ -14,7 +14,7 @@
         android:padding="8dp">
 
         <CheckBox
-            android:id="@+id/todoCheckBox"
+            android:id="@+id/taskCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -30,7 +30,7 @@
             android:id="@+id/taskDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/todoCheckBox"
+            android:layout_below="@+id/taskCheckBox"
             android:layout_alignParentLeft="true"
             android:layout_marginTop="-10dp"
             android:layout_marginStart="37dp"
@@ -38,10 +38,12 @@
 
         <View
             android:layout_width="2dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/taskDate"
-            android:layout_marginEnd="10dp"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@id/taskCheckBox"
+            android:layout_alignBottom="@id/taskDescription"
+            android:layout_toLeftOf="@id/taskDate"
+            android:layout_toStartOf="@id/taskTime"
+            android:layout_marginEnd="11dp"
             android:background="@android:color/darker_gray" />
 
         <TextView

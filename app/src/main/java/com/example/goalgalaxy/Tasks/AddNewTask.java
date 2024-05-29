@@ -79,9 +79,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        newTaskText = view.findViewById(R.id.newGoalText);
-        newTaskDescription = view.findViewById(R.id.newGoalDescription);
-        newTaskSaveButton = view.findViewById(R.id.newGoalButton);
+        newTaskText = view.findViewById(R.id.newTaskText);
+        newTaskDescription = view.findViewById(R.id.newTaskDescription);
+        newTaskSaveButton = view.findViewById(R.id.newTaskButton);
         reminder = view.findViewById(R.id.reminderButton);
 
         db = new DatabaseHandler(getActivity());

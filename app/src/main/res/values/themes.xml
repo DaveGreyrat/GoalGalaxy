@@ -38,5 +38,28 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
+
+
+    <style name="CustomDatePickerDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/third</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#808080</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/CustomDialogButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/CustomDialogButton</item>
+    </style>
+
+    <style name="CustomTimePickerDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/third</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#808080</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/CustomDialogButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/CustomDialogButton</item>
+    </style>
+
+    <style name="CustomDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/second</item>
+    </style>
+
+
     <style name="Theme.GoalGalaxy" parent="Base.Theme.GoalGalaxy" />
 </resources>

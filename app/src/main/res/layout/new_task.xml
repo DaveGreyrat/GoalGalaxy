@@ -4,67 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardBackgroundColor="@android:color/transparent"
-    card_view:cardCornerRadius="0dp"
-    card_view:cardElevation="0dp"
-    card_view:contentPadding="0dp"
-    android:background="@drawable/dialog">
+    card_view:cardCornerRadius="20dp"
+    card_view:cardElevation="5dp"
+    card_view:contentPadding="16dp"
+    android:backgroundTint="@android:color/white"    >
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:padding="16dp">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        >
 
-<EditText
-    android:id="@+id/newGoalText"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@null"
-    android:hint="New task"
-    android:minHeight="48dp"
-    android:maxLength="22"
-    android:maxLines="1"
-    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-    android:textSize="25dp" />
+        <EditText
+            android:id="@+id/newTaskText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="New task"
+            android:minHeight="48dp"
+            android:maxLength="19"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textSize="25dp" />
 
-<EditText
-    android:id="@+id/newGoalDescription"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/newGoalText"
-    android:layout_marginTop="3dp"
-    android:background="@null"
-    android:hint="Description"
-    android:minHeight="48dp"
-    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        <EditText
+            android:id="@+id/newTaskDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/newTaskText"
+            android:layout_marginTop="3dp"
+            android:background="@null"
+            android:hint="Description"
+            android:minHeight="48dp"
+            android:maxLines="2"
+            android:maxLength="55"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-<com.google.android.material.button.MaterialButton
-    android:id="@+id/reminderButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/newGoalDescription"
-    android:layout_alignParentStart="true"
-    android:backgroundTint="@color/fourth"
-    android:text="Reminder"
-    android:textColor="@color/first"
-    android:textSize="16sp"
-    app:iconTint="@color/first"
-    app:iconSize="20dp"
-    app:icon="@drawable/baseline_access_time_24"
-    app:cornerRadius="15dp"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reminderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/newTaskDescription"
+            android:layout_alignParentStart="true"
+            android:backgroundTint="@color/fourth"
+            android:text="Reminder"
+            android:textColor="@color/first"
+            android:textSize="16sp"
+            app:iconTint="@color/first"
+            app:iconSize="20dp"
+            app:icon="@drawable/baseline_access_time_24"
+            app:cornerRadius="15dp" />
 
-<Button
-    android:id="@+id/newGoalButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/newGoalDescription"
-    android:textSize="16sp"
-    android:layout_alignParentEnd="true"
-    android:backgroundTint="@color/gray"
-    android:text="Save"
-    android:textAllCaps="false"
-    android:textColor="@color/darker_gray" />
+        <Button
+            android:id="@+id/newTaskButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/newTaskDescription"
+            android:textSize="16sp"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@color/gray"
+            android:text="Save"
+            android:textAllCaps="false"
+            android:textColor="@color/darker_gray" />
 
-</RelativeLayout>
-    </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

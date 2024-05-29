@@ -66,7 +66,15 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
         final ToDoModel item = todoList.get(position);
         if (item != null) {
             holder.task.setText(item.getTask());
-            holder.description.setText(item.getDescription());
+
+            String description = item.getDescription();
+            if (description.length() > 19) {
+                String formattedDescription = description.substring(0, 19) + "\n" + description.substring(19);
+                holder.description.setText(formattedDescription);
+            } else {
+                holder.description.setText(description);
+            }
+
             holder.date.setText(String.format(Locale.getDefault(), "%d/%d", item.getMonth(), item.getDay()));
             holder.time.setText(String.format(Locale.getDefault(), "%02d:%02d", item.getHour(), item.getMinute()));
             if (item.isReminder()) {
@@ -148,7 +156,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> {
 
         ViewHolder(View view) {
             super(view);
-            task = view.findViewById(R.id.todoCheckBox);
+            task = view.findViewById(R.id.taskCheckBox);
             description = view.findViewById(R.id.taskDescription);
             date = view.findViewById(R.id.taskDate);
             time = view.findViewById(R.id.taskTime);
