@@ -134,10 +134,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s == newTaskText.getText()) {
                     isTaskTextChanged = true;
-                    isDescriptionTextChanged = false; // Сбрасываем флаг изменения описания
+                    isDescriptionTextChanged = false;
                 } else if (s == newTaskDescription.getText()) {
                     isDescriptionTextChanged = true;
-                    isTaskTextChanged = false; // Сбрасываем флаг изменения задачи
+                    isTaskTextChanged = false;
                 }
 
                 checkFieldsForEmptyValues();
@@ -150,23 +150,19 @@ public class AddNewTask extends BottomSheetDialogFragment {
         newTaskText.addTextChangedListener(textWatcher);
         newTaskDescription.addTextChangedListener(textWatcher);
 
-        // Check fields initially
         checkFieldsForEmptyValues();
 
         reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create and show DateTimePicker fragment
                 DateTimePicker dateTimePickerFragment = new DateTimePicker();
                 dateTimePickerFragment.setDateTimeListener(new DateTimePicker.DateTimeListener() {
                     @Override
                     public void onDateTimeSet(int year, int month, int day, int hour, int minute) {
-                        // Update the displayed date and time in AddNewTask
                         updateDateTime(year, month, day, hour, minute);
                     }
                 });
 
-                // Pass the current date and time to DateTimePicker
                 dateTimePickerFragment.setDefaultDateTime(Year, Month, Day, Hour, Minute);
                 dateTimePickerFragment.setAddNewTask(AddNewTask.this);
                 dateTimePickerFragment.show(getChildFragmentManager(), "dateTimePicker");

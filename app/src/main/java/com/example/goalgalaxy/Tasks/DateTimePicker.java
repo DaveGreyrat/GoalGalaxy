@@ -38,7 +38,6 @@ public class DateTimePicker extends DialogFragment {
     private boolean isTimeSet = false;
     private static final String PREFS_NAME = "DateTimePrefs";
 
-    // Ключи для сохранения значений
     private static final String KEY_YEAR = "year";
     private static final String KEY_MONTH = "month";
     private static final String KEY_DAY = "day";
@@ -70,7 +69,6 @@ public class DateTimePicker extends DialogFragment {
         this.dateTimeListener = listener;
     }
 
-    // Установить значения по умолчанию для даты и времени
     public void setDefaultDateTime(int year, int month, int day, int hour, int minute) {
         defaultYear = year;
         defaultMonth = month;
@@ -86,7 +84,6 @@ public class DateTimePicker extends DialogFragment {
         mHour = hour;
         mMinute = minute;
 
-        // Обновляем текст в соответствующих EditText, если они уже инициализированы
         if (inDate != null && inTime != null) {
             inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", defaultDay, defaultMonth + 1, defaultYear));
             inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", defaultHour, defaultMinute));
@@ -148,7 +145,6 @@ public class DateTimePicker extends DialogFragment {
         inDate = view.findViewById(R.id.in_date);
         inTime = view.findViewById(R.id.in_time);
 
-        // Установка текста в EditText с использованием переданных значений по умолчанию
         inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", defaultDay, defaultMonth + 1, defaultYear));
         inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", defaultHour, defaultMinute));
 
@@ -217,7 +213,6 @@ public class DateTimePicker extends DialogFragment {
         inDate = dialog.findViewById(R.id.in_date);
         inTime = dialog.findViewById(R.id.in_time);
 
-        // Установка текста в EditText с использованием переданных значений по умолчанию
         inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", defaultDay, defaultMonth + 1, defaultYear));
         inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", defaultHour, defaultMinute));
 

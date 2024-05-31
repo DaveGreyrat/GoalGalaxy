@@ -107,7 +107,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cv.put(MINUTE, task.getMinute());
         cv.put(STATUS, task.getStatus());
 
-        // Проверяем, существует ли уже задача в локальной базе данных
         boolean taskExists = doesTaskExist(task.getId());
 
         if (!taskExists) {
@@ -183,11 +182,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cv.put(STATUS, status);
         int rowsAffected = db.update(TODO_TABLE, cv, ID + "= ?", new String[]{String.valueOf(id)});
         if (rowsAffected > 0) {
-            syncTaskStatusToFirebase(id, status); // Синхронизируем обновление статуса с Firebase
+            if (status == 1) {
+                cancelNotification(id);
+            }
+            syncTaskStatusToFirebase(id, status);
         }
         Log.d("DatabaseHandler", "Rows affected by updateStatus(): " + rowsAffected);
         closeDatabase();
     }
+
 
 
     public void updateTask(int id, String task, String description, int dateY, int dateM, int dateD, int timeH, int timeM) {
@@ -202,15 +205,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cv.put(MINUTE, timeM);
         int rowsAffected = db.update(TODO_TABLE, cv, ID + "= ?", new String[]{String.valueOf(id)});
         if (rowsAffected > 0) {
-            syncTaskToFirebase(new ToDoModel(id, task, description, dateY, dateM, dateD, timeH, timeM, 0)); // Sync the task update to Firebase
-        }
-        closeDatabase();
-
-        ToDoModel updatedTask = getTaskById(id);
-        if (updatedTask != null) {
+            ToDoModel previousTask = getTaskById(id);
+            if (previousTask != null) {
+                cancelNotification(id);
+            }
+            ToDoModel updatedTask = new ToDoModel(id, task, description, dateY, dateM, dateD, timeH, timeM, 0);
+            setNotification(updatedTask);
             syncTaskToFirebase(updatedTask);
         }
+        closeDatabase();
     }
+
 
     public void deleteTask(int id) {
         openDatabase();
@@ -233,12 +238,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private void syncTaskStatusToFirebase(int id, int status) {
         if (currentUser != null) {
-            // Получаем задачу из локальной базы данных по id
             ToDoModel task = getTaskById(id);
             if (task != null) {
-                // Обновляем статус задачи
                 task.setStatus(status);
-                // Отправляем обновленную задачу на сервер
                 databaseReference.child(String.valueOf(id)).setValue(task)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -257,7 +259,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    // Новый метод для получения задачи по id из локальной базы данных
     @SuppressLint("Range")
     private ToDoModel getTaskById(int id) {
         openDatabase();
@@ -313,15 +314,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String userId = currentUser.getUid();
         DatabaseReference userTasksRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("tasks");
 
-        // Загружаем данные из Firebase и синхронизируем их с локальной базой данных
         userTasksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                clearLocalDatabase(); // Очищаем локальную базу данных перед синхронизацией
+                clearLocalDatabase();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ToDoModel task = snapshot.getValue(ToDoModel.class);
                     if (task != null) {
-                        insertTask(task, false); // Вставляем задачи без синхронизации с Firebase
+                        insertTask(task, false);
                     }
                 }
             }
@@ -341,7 +341,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cur = null;
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH) + 1; // January is 0
+        int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
         try {
@@ -477,7 +477,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot snapshot, String previousChildName) {
-                // Не требуется ничего делать для перемещения
             }
 
             @Override
@@ -515,16 +514,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public void setNotification(ToDoModel task) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, task.getYear());
-        calendar.set(Calendar.MONTH, task.getMonth() - 1); // Январь - 0
-        calendar.set(Calendar.DAY_OF_MONTH, task.getDay());
-        calendar.set(Calendar.HOUR_OF_DAY, task.getHour());
-        calendar.set(Calendar.MINUTE, task.getMinute());
-        calendar.set(Calendar.SECOND, 0);
+    private void setNotification(ToDoModel task) {
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.set(Calendar.SECOND, 0);
 
-        Intent intent = new Intent(mContext,NotificationReceiver.class);
+        Calendar taskCalendar = Calendar.getInstance();
+        taskCalendar.set(task.getYear(), task.getMonth() - 1, task.getDay(), task.getHour(), task.getMinute());
+        taskCalendar.add(Calendar.MINUTE, 1);
+
+        if (currentCalendar.getTimeInMillis() >= taskCalendar.getTimeInMillis() || currentCalendar.get(Calendar.YEAR) > task.getYear()
+                || currentCalendar.get(Calendar.MONTH) > task.getMonth() - 1 || currentCalendar.get(Calendar.DAY_OF_MONTH) > task.getDay()
+                || currentCalendar.get(Calendar.HOUR_OF_DAY) > task.getHour() || currentCalendar.get(Calendar.MINUTE) > task.getMinute()) {
+            return;
+        }
+
+        Intent intent = new Intent(mContext, NotificationReceiver.class);
         intent.putExtra("task", task.getTask());
         intent.putExtra("description", task.getDescription());
 
@@ -532,9 +536,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
         if (alarmManager != null) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, taskCalendar.getTimeInMillis(), pendingIntent);
         }
     }
+
+
+
+
+
 
     private void cancelNotification(int taskId) {
         Intent intent = new Intent(mContext, NotificationReceiver.class);

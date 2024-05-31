@@ -21,16 +21,13 @@ public class SplashActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        // Check if "Remember Me" is enabled
         SharedPreferences sharedPref = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         boolean rememberMe = sharedPref.getBoolean("rememberMe", false);
 
         final Intent intent;
         if (rememberMe) {
-            // If "Remember Me" is enabled, open MainActivity
             intent = new Intent(SplashActivity.this, MainActivity.class);
         } else {
-            // Otherwise, open LoginActivity
             intent = new Intent(SplashActivity.this, LoginActivity.class);
         }
 

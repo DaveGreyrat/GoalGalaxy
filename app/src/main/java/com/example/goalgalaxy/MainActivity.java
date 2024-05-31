@@ -57,9 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         db = new DatabaseHandler(this);
         adapter = new ToDoAdapter(db, this);
 
-        context = this; // Сохраняем контекст активности
+        context = this;
 
-        // Инициализация вашего DatabaseHandler
         DatabaseHandler databaseHandler = new DatabaseHandler(context);
 
         db.setupFirebaseListener(this);
