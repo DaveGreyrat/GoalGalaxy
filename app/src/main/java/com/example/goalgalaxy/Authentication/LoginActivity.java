@@ -64,11 +64,18 @@ public class LoginActivity extends AppCompatActivity {
                 String pass = loginPassword.getText().toString();
 
                 if (email.isEmpty()) {
+                    ChooseUser chooseUser = new ChooseUser();
+                    chooseUser.show(LoginActivity.this.getSupportFragmentManager(), "chooseUser");
                     loginEmail.setError("Email cannot be empty");
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(email.toLowerCase()).matches()) {
                     loginEmail.setError("Please enter a valid email");
                 } else if (pass.isEmpty()) {
+                    ChooseUser chooseUser = new ChooseUser();
+                    chooseUser.show(LoginActivity.this.getSupportFragmentManager(), "chooseUser");
                     loginPassword.setError("Password cannot be empty");
+                }else if(email.isEmpty() && pass.isEmpty()){
+                    ChooseUser chooseUser = new ChooseUser();
+                    chooseUser.show(LoginActivity.this.getSupportFragmentManager(), "chooseUser");
                 } else {
                     loginUser(email, pass);
                 }
