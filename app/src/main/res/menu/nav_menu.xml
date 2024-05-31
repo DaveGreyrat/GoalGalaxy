@@ -20,7 +20,7 @@
         <item
             android:id="@+id/nav_tasks"
             android:icon="@drawable/nav_tasks"
-            android:title="Tasks"/>
+            android:title="Goals"/>
 
 <!--        <item-->
 <!--            android:id="@+id/nav_goals"-->
