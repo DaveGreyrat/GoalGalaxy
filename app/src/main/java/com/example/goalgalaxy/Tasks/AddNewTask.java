@@ -1,5 +1,7 @@
 package com.example.goalgalaxy.Tasks;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -14,12 +16,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.goalgalaxy.Authentication.LoginActivity;
 import com.example.goalgalaxy.DialogCloseListener;
 import com.example.goalgalaxy.Fragments.TasksFragment;
 import com.example.goalgalaxy.Model.ToDoModel;
@@ -45,13 +49,26 @@ public class AddNewTask extends BottomSheetDialogFragment {
     private Bundle bundle;
     private boolean isTaskTextChanged = false;
     private boolean isDescriptionTextChanged = false;
+    private boolean isDateChanged = false;
+    private boolean isTimeChanged = false;
     private TasksFragment.OnTaskAddedListener mOnTaskAddedListener;
     private OnTaskAddedListener mListener;
+    private AddNewTask addNewTask;
+
 
 
     public interface OnTaskAddedListener {
         void onTaskAdded();
     }
+
+    public interface AddNewTaskProvider {
+        AddNewTask getAddNewTask();
+    }
+
+    public AddNewTask getAddNewTask() {
+        return addNewTask;
+    }
+
     public void setOnTaskAddedListener(TasksFragment.OnTaskAddedListener listener) {
         mOnTaskAddedListener = listener;
     }
@@ -115,14 +132,14 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Set flags to true when text changes
                 if (s == newTaskText.getText()) {
                     isTaskTextChanged = true;
+                    isDescriptionTextChanged = false; // Сбрасываем флаг изменения описания
                 } else if (s == newTaskDescription.getText()) {
                     isDescriptionTextChanged = true;
+                    isTaskTextChanged = false; // Сбрасываем флаг изменения задачи
                 }
 
-                // Check if any field is empty and update save button state
                 checkFieldsForEmptyValues();
             }
 
@@ -144,19 +161,18 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 dateTimePickerFragment.setDateTimeListener(new DateTimePicker.DateTimeListener() {
                     @Override
                     public void onDateTimeSet(int year, int month, int day, int hour, int minute) {
-                        // После выбора даты и времени обновляем отображаемую информацию в AddNewTask
+                        // Update the displayed date and time in AddNewTask
                         updateDateTime(year, month, day, hour, minute);
                     }
                 });
-                // Передайте сохраненное время в DateTimePicker перед открытием его диалогового окна
 
+                // Pass the current date and time to DateTimePicker
                 dateTimePickerFragment.setDefaultDateTime(Year, Month, Day, Hour, Minute);
-
+                dateTimePickerFragment.setAddNewTask(AddNewTask.this);
                 dateTimePickerFragment.show(getChildFragmentManager(), "dateTimePicker");
-
-
             }
         });
+
 
 
         newTaskSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -192,32 +208,17 @@ public class AddNewTask extends BottomSheetDialogFragment {
         String text = newTaskText.getText().toString();
         String description = newTaskDescription.getText().toString();
 
-        // Check if we are creating a new task or updating an existing one
-        if (!isUpdate) {
-            // If creating a new task, check only the task field
-            if (TextUtils.isEmpty(text)) {
-                newTaskSaveButton.setEnabled(false);
-                newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.darker_gray));
-                newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray));
-            } else {
-                newTaskSaveButton.setEnabled(true);
-                newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-                newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.third));
-            }
-        } else {
-            // If updating an existing task, check both task and description fields
-            if (TextUtils.isEmpty(text) || TextUtils.isEmpty(description) ||
-                    (!isTaskTextChanged && !isDescriptionTextChanged)) {
-                newTaskSaveButton.setEnabled(false);
-                newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.darker_gray));
-                newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray));
-            } else {
-                newTaskSaveButton.setEnabled(true);
-                newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-                newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.third));
-            }
+        if (TextUtils.isEmpty(text)) {
+            newTaskSaveButton.setEnabled(false);
+            newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.darker_gray));
+            newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray));
+        } else if ((!TextUtils.isEmpty(text) && isDescriptionTextChanged) || (isTaskTextChanged && TextUtils.isEmpty(description) || isTaskTextChanged || (!TextUtils.isEmpty(text) && isTimeChanged) || (!TextUtils.isEmpty(text) && isDateChanged))){
+            newTaskSaveButton.setEnabled(true);
+            newTaskSaveButton.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+            newTaskSaveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.third));
         }
     }
+
 
 
     private void updateDateTime(int year, int month, int day, int hour, int minute) {
@@ -226,6 +227,18 @@ public class AddNewTask extends BottomSheetDialogFragment {
         Day = day;
         Hour = hour;
         Minute = minute;
+    }
+
+
+
+    public void setDateChanged(boolean changed) {
+        isDateChanged = changed;
+        checkFieldsForEmptyValues();
+    }
+
+    public void setTimeChanged(boolean changed) {
+        isTimeChanged = changed;
+        checkFieldsForEmptyValues();
     }
 
 

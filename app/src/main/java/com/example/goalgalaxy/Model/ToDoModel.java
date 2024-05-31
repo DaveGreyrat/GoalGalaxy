@@ -3,6 +3,7 @@ package com.example.goalgalaxy.Model;
 public class ToDoModel {
     private int id, status, year, month, day, hour, minute;
     private String task, description;
+    private String uuid;
     private boolean isReminder;
 
     public ToDoModel() {
@@ -110,5 +111,14 @@ public class ToDoModel {
     public void setReminder(boolean reminder) {
         isReminder = reminder;
     }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
 
 }

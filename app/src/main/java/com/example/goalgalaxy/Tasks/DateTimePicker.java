@@ -47,6 +47,14 @@ public class DateTimePicker extends DialogFragment {
 
     private Context context;
     private DateTimeListener dateTimeListener;
+    private AddNewTask addNewTask;
+
+
+
+    public void setAddNewTask(AddNewTask addNewTask) {
+        this.addNewTask = addNewTask;
+    }
+
 
 
 
@@ -72,16 +80,19 @@ public class DateTimePicker extends DialogFragment {
         isDateSet = true;
         isTimeSet = true;
 
-        // Обновляем текст в соответствующих EditText
+        mYear = year;
+        mMonth = month;
+        mDay = day;
+        mHour = hour;
+        mMinute = minute;
+
+        // Обновляем текст в соответствующих EditText, если они уже инициализированы
         if (inDate != null && inTime != null) {
-            if (isDateSet) {
-                inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", defaultDay, defaultMonth + 1, defaultYear));
-            }
-            if (isTimeSet) {
-                inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", defaultHour, defaultMinute));
-            }
+            inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", defaultDay, defaultMonth + 1, defaultYear));
+            inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", defaultHour, defaultMinute));
         }
     }
+
 
 
     public void clearDateTime() {
@@ -130,7 +141,6 @@ public class DateTimePicker extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_layout, container, false);
 
-        loadDateTime(requireContext());
 
         btnDatePicker = view.findViewById(R.id.btn_date);
         btnTimePicker = view.findViewById(R.id.btn_time);
@@ -138,8 +148,9 @@ public class DateTimePicker extends DialogFragment {
         inDate = view.findViewById(R.id.in_date);
         inTime = view.findViewById(R.id.in_time);
 
-        inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", mDay, mMonth + 1, mYear));
-        inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", mHour, mMinute));
+        // Установка текста в EditText с использованием переданных значений по умолчанию
+        inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", defaultDay, defaultMonth + 1, defaultYear));
+        inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", defaultHour, defaultMinute));
 
         btnDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +163,7 @@ public class DateTimePicker extends DialogFragment {
                                 mMonth = monthOfYear;
                                 mDay = dayOfMonth;
                                 isDateSet = true;
+                                addNewTask.setDateChanged(true);
                                 inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", mDay, mMonth + 1, mYear));
                             }
                         }, mYear, mMonth, mDay);
@@ -170,9 +182,10 @@ public class DateTimePicker extends DialogFragment {
                                 mHour = hourOfDay;
                                 mMinute = minute;
                                 isTimeSet = true;
+                                addNewTask.setTimeChanged(true);
                                 inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", mHour, mMinute));
                             }
-                        }, mHour, mMinute, false);
+                        }, mHour, mMinute, true);
 
                 timePickerDialog.show();
             }
@@ -201,16 +214,12 @@ public class DateTimePicker extends DialogFragment {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setLayout(params.width, params.height);
 
-        // Инициализация элементов EditText
         inDate = dialog.findViewById(R.id.in_date);
         inTime = dialog.findViewById(R.id.in_time);
 
-        // Загрузка сохраненной даты и времени
-        loadDateTime(requireContext());
-
-        // Установка текста в EditText
-        inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", mDay, mMonth + 1, mYear));
-        inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", mHour, mMinute));
+        // Установка текста в EditText с использованием переданных значений по умолчанию
+        inDate.setText(String.format(Locale.getDefault(), "%d/%d/%d", defaultDay, defaultMonth + 1, defaultYear));
+        inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", defaultHour, defaultMinute));
 
         return dialog;
     }
@@ -227,7 +236,6 @@ public class DateTimePicker extends DialogFragment {
         mMinute = minute;
         inTime.setText(String.format(Locale.getDefault(), "%02d:%02d", mHour, mMinute));
     }
-
 
 
     @Override

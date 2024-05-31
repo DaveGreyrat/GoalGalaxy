@@ -1,6 +1,8 @@
 package com.example.goalgalaxy.Fragments;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -15,6 +17,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.goalgalaxy.Adapter.ToDoAdapter;
+import com.example.goalgalaxy.MainActivity;
+import com.example.goalgalaxy.RecyclerItemTouchHelper;
+import com.example.goalgalaxy.Tasks.AddNewTask;
 import com.example.goalgalaxy.Tasks.DateTimePicker;
 import com.example.goalgalaxy.DialogCloseListener;
 import com.example.goalgalaxy.Model.ToDoModel;
@@ -73,6 +78,32 @@ public class HomeFragment extends Fragment implements DialogCloseListener {
 
 
         setRandomQuote();
+
+        dateTimePicker = new DateTimePicker();
+        dateTimePicker.setContext(requireContext());
+
+        db = new DatabaseHandler(requireActivity());
+        db.openDatabase();
+
+        tasksRecyclerView = view.findViewById(R.id.tasksRecyclerView);
+        tasksRecyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        tasksAdapter = new ToDoAdapter(db, (MainActivity) requireActivity());
+        tasksRecyclerView.setAdapter(tasksAdapter);
+
+        ItemTouchHelper itemTouchHelper = new
+                ItemTouchHelper(new RecyclerItemTouchHelper(tasksAdapter));
+        itemTouchHelper.attachToRecyclerView(tasksRecyclerView);
+
+        fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateTimePicker.clearDateTime();
+                AddNewTask.newInstance().show(requireActivity().getSupportFragmentManager(), AddNewTask.TAG);
+            }
+        });
+
+        loadTodayTasks();
 
 
         return view;
@@ -282,5 +313,11 @@ public class HomeFragment extends Fragment implements DialogCloseListener {
 
         quoteText.setText(randomQuote);
         authorText.setText("- " + randomAuthor);
+    }
+
+    public void loadTodayTasks() {
+        taskList = db.getIncompleteTodayTasks();
+        Collections.reverse(taskList);
+        tasksAdapter.setTasks(taskList);
     }
 }

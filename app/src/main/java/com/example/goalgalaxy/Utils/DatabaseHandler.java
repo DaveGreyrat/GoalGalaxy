@@ -1,20 +1,27 @@
 package com.example.goalgalaxy.Utils;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.goalgalaxy.MainActivity;
 import com.example.goalgalaxy.Model.ToDoModel;
+import com.example.goalgalaxy.NotificationReceiver;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,9 +59,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private SQLiteDatabase db;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
+    Context mContext;
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
@@ -85,7 +94,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    public void insertTask(ToDoModel task, boolean syncWithFirebase) {
+
+    public void insertTask(ToDoModel task, boolean syncWithFirebase, boolean isFromFirebase) {
         openDatabase();
         ContentValues cv = new ContentValues();
         cv.put(TASK, task.getTask());
@@ -96,17 +106,45 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cv.put(HOUR, task.getHour());
         cv.put(MINUTE, task.getMinute());
         cv.put(STATUS, task.getStatus());
-        long id = db.insert(TODO_TABLE, null, cv);
-        task.setId((int) id); // Устанавливаем ID задачи на вновь вставленный ID
-        if (syncWithFirebase) {
+
+        // Проверяем, существует ли уже задача в локальной базе данных
+        boolean taskExists = doesTaskExist(task.getId());
+
+        if (!taskExists) {
+            long id = db.insert(TODO_TABLE, null, cv);
+            task.setId((int) id);
+            setNotification(task);
+        }
+
+        if (syncWithFirebase && !isFromFirebase) {
             syncTaskToFirebase(task);
         }
+
         closeDatabase();
+    }
+
+    public void insertTask(ToDoModel task, boolean syncWithFirebase) {
+        insertTask(task, syncWithFirebase, false);
     }
 
     public void insertTask(ToDoModel task) {
         insertTask(task, true);
     }
+
+    private boolean doesTaskExist(int id) {
+        Cursor cur = null;
+        boolean exists = false;
+        try {
+            cur = db.query(TODO_TABLE, null, ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
+            exists = (cur != null && cur.getCount() > 0);
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
+        }
+        return exists;
+    }
+
 
     @SuppressLint("Range")
     public List<ToDoModel> getAllTasks() {
@@ -167,13 +205,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             syncTaskToFirebase(new ToDoModel(id, task, description, dateY, dateM, dateD, timeH, timeM, 0)); // Sync the task update to Firebase
         }
         closeDatabase();
+
+        ToDoModel updatedTask = getTaskById(id);
+        if (updatedTask != null) {
+            syncTaskToFirebase(updatedTask);
+        }
     }
 
     public void deleteTask(int id) {
         openDatabase();
         int rowsAffected = db.delete(TODO_TABLE, ID + "= ?", new String[]{String.valueOf(id)});
         if (rowsAffected > 0) {
-            deleteTaskFromFirebase(id); // Удаляем задачу из Firebase
+            deleteTaskFromFirebase(id);
+            cancelNotification(id);
         }
         Log.d("DatabaseHandler", "Rows affected by deleteTask(): " + rowsAffected);
         closeDatabase();
@@ -199,6 +243,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+
                                 Log.d("DatabaseHandler", "Task status successfully updated in Firebase");
                             }
                         })
@@ -397,4 +442,111 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(TODO_TABLE, null, null);
         closeDatabase();
     }
+
+    public void setupFirebaseListener(MainActivity activity) {
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
+                ToDoModel task = snapshot.getValue(ToDoModel.class);
+                if (task != null) {
+                    insertTask(task, false, true);
+                    activity.getAdapter().addTask(task);
+                    sendUpdateBroadcast(mContext);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {
+                ToDoModel task = snapshot.getValue(ToDoModel.class);
+                if (task != null) {
+                    updateTaskInLocalDatabase(task);
+                    activity.getAdapter().updateTask(task);
+                    sendUpdateBroadcast(mContext);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                ToDoModel task = snapshot.getValue(ToDoModel.class);
+                if (task != null) {
+                    deleteTaskFromLocalDatabase(task.getId());
+                    activity.getAdapter().removeTask(task.getId());
+                    sendUpdateBroadcast(mContext);
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, String previousChildName) {
+                // Не требуется ничего делать для перемещения
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("DatabaseHandler", "Firebase listener cancelled", error.toException());
+            }
+        });
+    }
+
+
+    private void updateTaskInLocalDatabase(ToDoModel task) {
+        openDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TASK, task.getTask());
+        cv.put(DESCRIPTION, task.getDescription());
+        cv.put(YEAR, task.getYear());
+        cv.put(MONTH, task.getMonth());
+        cv.put(DAY, task.getDay());
+        cv.put(HOUR, task.getHour());
+        cv.put(MINUTE, task.getMinute());
+        cv.put(STATUS, task.getStatus());
+        db.update(TODO_TABLE, cv, ID + "= ?", new String[]{String.valueOf(task.getId())});
+        closeDatabase();
+    }
+
+    private void deleteTaskFromLocalDatabase(int id) {
+        openDatabase();
+        db.delete(TODO_TABLE, ID + "= ?", new String[]{String.valueOf(id)});
+        closeDatabase();
+    }
+
+    private void sendUpdateBroadcast(Context context) {
+        Intent intent = new Intent("UPDATE_DATA");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+
+    public void setNotification(ToDoModel task) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, task.getYear());
+        calendar.set(Calendar.MONTH, task.getMonth() - 1); // Январь - 0
+        calendar.set(Calendar.DAY_OF_MONTH, task.getDay());
+        calendar.set(Calendar.HOUR_OF_DAY, task.getHour());
+        calendar.set(Calendar.MINUTE, task.getMinute());
+        calendar.set(Calendar.SECOND, 0);
+
+        Intent intent = new Intent(mContext,NotificationReceiver.class);
+        intent.putExtra("task", task.getTask());
+        intent.putExtra("description", task.getDescription());
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, task.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+
+        if (alarmManager != null) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
+    }
+
+    private void cancelNotification(int taskId) {
+        Intent intent = new Intent(mContext, NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, taskId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+        }
+    }
+
+
+
+
 }

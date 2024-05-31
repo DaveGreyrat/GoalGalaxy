@@ -23,10 +23,11 @@
             android:background="@null"
             android:hint="New task"
             android:minHeight="48dp"
-            android:maxLength="19"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textSize="25dp" />
+            <!--android:maxLength="19"-->
+
 
         <EditText
             android:id="@+id/newTaskDescription"
@@ -38,8 +39,9 @@
             android:hint="Description"
             android:minHeight="48dp"
             android:maxLines="2"
-            android:maxLength="55"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            <!--android:maxLength="55"-->
+
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/reminderButton"

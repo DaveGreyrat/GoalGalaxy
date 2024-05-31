@@ -1,6 +1,5 @@
 package com.example.goalgalaxy.Authentication;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -25,7 +24,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
@@ -33,7 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private TextView signupRedirectText, forgotPasswordText;
     private CheckBox remember;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,36 +45,16 @@ public class LoginActivity extends AppCompatActivity {
         remember = findViewById(R.id.remember);
         forgotPasswordText = findViewById(R.id.forgetpassword);
 
-
-
         // Check if user previously opted for "Remember Me"
         SharedPreferences sharedPref = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
         boolean rememberMe = sharedPref.getBoolean("rememberMe", false);
-
 
         if (rememberMe) {
             String savedEmail = sharedPref.getString("username", "");
             String savedPassword = sharedPref.getString("password", "");
 
             if (!savedEmail.isEmpty() && !savedPassword.isEmpty()) {
-                auth.signInWithEmailAndPassword(savedEmail, savedPassword)
-                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                            @Override
-                            public void onSuccess(AuthResult authResult) {
-                                if (auth.getCurrentUser().isEmailVerified()) {
-                                    Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                    finish();
-                                } else {
-                                    Toast.makeText(LoginActivity.this, "Email not verified", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(LoginActivity.this, "Auto Login Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                loginUser(savedEmail, savedPassword);
             }
         }
 
@@ -91,59 +68,10 @@ public class LoginActivity extends AppCompatActivity {
                     loginEmail.setError("Email cannot be empty");
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(email.toLowerCase()).matches()) {
                     loginEmail.setError("Please enter a valid email");
+                } else if (pass.isEmpty()) {
+                    loginPassword.setError("Password cannot be empty");
                 } else {
-                    if (!pass.isEmpty()) {
-                        auth.signInWithEmailAndPassword(email, pass)
-                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                    @Override
-                                    public void onSuccess(AuthResult authResult) {
-
-                                        if (auth.getCurrentUser().isEmailVerified()) {
-                                            auth.signInWithEmailAndPassword(email, pass)
-                                                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                                        @Override
-                                                        public void onSuccess(AuthResult authResult) {
-                                                            if (auth.getCurrentUser().isEmailVerified()) {
-                                                                Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                                                if (remember.isChecked()) {
-                                                                    saveCredentials(email, pass);
-                                                                }
-                                                                // Очистка локальной базы данных перед загрузкой задач текущего пользователя
-                                                                new DatabaseHandler(LoginActivity.this).clearLocalDatabase();
-                                                                // Загрузка задач текущего пользователя из Firebase
-                                                                new DatabaseHandler(LoginActivity.this).syncFromFirebase();
-                                                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                                                finish();
-                                                            } else {
-                                                                Toast.makeText(LoginActivity.this, "Email not verified", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                    }).addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-
-                                            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                            if (remember.isChecked()) {
-                                                saveCredentials(email, pass);
-                                            }
-                                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                            finish();
-                                        } else {
-                                            Toast.makeText(LoginActivity.this, "Email not verified", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                        loginPassword.setError("Password cannot be empty");
-                    }
+                    loginUser(email, pass);
                 }
             }
         });
@@ -163,12 +91,37 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void loginUser(String email, String password) {
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        if (auth.getCurrentUser().isEmailVerified()) {
+                            Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                            if (remember.isChecked()) {
+                                saveCredentials(email, password);
+                            }
+                            new DatabaseHandler(LoginActivity.this).clearLocalDatabase();
+                            new DatabaseHandler(LoginActivity.this).syncFromFirebase();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Email not verified", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     public void openPasswordReset() {
         Intent intent = new Intent(this, PasswordResetActivity.class);
         startActivity(intent);
     }
-
-
 
     private void saveCredentials(final String email, final String password) {
         new AsyncTask<Void, Void, Void>() {
@@ -184,6 +137,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         }.execute();
     }
-
-
 }

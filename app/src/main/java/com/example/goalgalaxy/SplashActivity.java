@@ -2,7 +2,9 @@ package com.example.goalgalaxy;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -15,16 +17,27 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        final Intent i = new Intent(SplashActivity.this, LoginActivity.class);
+        // Check if "Remember Me" is enabled
+        SharedPreferences sharedPref = getSharedPreferences("loginPrefs", Context.MODE_PRIVATE);
+        boolean rememberMe = sharedPref.getBoolean("rememberMe", false);
+
+        final Intent intent;
+        if (rememberMe) {
+            // If "Remember Me" is enabled, open MainActivity
+            intent = new Intent(SplashActivity.this, MainActivity.class);
+        } else {
+            // Otherwise, open LoginActivity
+            intent = new Intent(SplashActivity.this, LoginActivity.class);
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(i);
+                startActivity(intent);
                 finish();
             }
         }, 1000);

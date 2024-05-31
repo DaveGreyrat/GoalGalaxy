@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.goalgalaxy.Adapter.ToDoAdapter;
 import com.example.goalgalaxy.Authentication.LoginActivity;
 import com.example.goalgalaxy.Fragments.CompletedFragment;
 import com.example.goalgalaxy.Fragments.GoalsFragment;
@@ -27,6 +28,8 @@ import com.example.goalgalaxy.Fragments.HomeFragment;
 import com.example.goalgalaxy.Fragments.SettingsFragment;
 import com.example.goalgalaxy.Fragments.TasksFragment;
 import com.example.goalgalaxy.Fragments.TodayFragment;
+import com.example.goalgalaxy.Tasks.AddNewTask;
+import com.example.goalgalaxy.Utils.DatabaseHandler;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,6 +38,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawerLayout;
     private FirebaseAuth auth;
+    private ToDoAdapter adapter;
+    private DatabaseHandler db;
+    private Context context;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +53,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        db = new DatabaseHandler(this);
+        adapter = new ToDoAdapter(db, this);
+
+        context = this; // Сохраняем контекст активности
+
+        // Инициализация вашего DatabaseHandler
+        DatabaseHandler databaseHandler = new DatabaseHandler(context);
+
+        db.setupFirebaseListener(this);
 
         updateNavigationHeader();
 
@@ -65,12 +83,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (itemId == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-        } else if (itemId == R.id.nav_today) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TodayFragment()).commit();
         } else if (itemId == R.id.nav_tasks) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TasksFragment()).commit();
-        } else if (itemId == R.id.nav_goals) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GoalsFragment()).commit();
         } else if (itemId == R.id.nav_completed) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CompletedFragment()).commit();
         } else if (itemId == R.id.nav_settings) {
@@ -160,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (currentFragment != null && currentFragment.isVisible()) {
                     if (currentFragment instanceof TasksFragment) {
                         ((TasksFragment) currentFragment).loadTasks();
-                    } else if (currentFragment instanceof TodayFragment) {
-                        ((TodayFragment) currentFragment).loadTodayTasks();
+                    } else if (currentFragment instanceof HomeFragment) {
+                        ((HomeFragment) currentFragment).loadTodayTasks();
                     } else if (currentFragment instanceof CompletedFragment) {
                         ((CompletedFragment) currentFragment).loadCompletedTasks();
                     } else {
@@ -186,4 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
+    public ToDoAdapter getAdapter() {
+        return adapter;
+    }
 }
