@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <stroke
+        android:width="2dp"
+        android:color="@color/second"/>
     <corners
-        android:topLeftRadius="20dp"
-        android:topRightRadius="20dp"
-        android:bottomLeftRadius="0dp"
-        android:bottomRightRadius="0dp"/>
-    <solid android:color="@android:color/white"/>
+        android:radius="30dp"/>
+    <!-- Прозрачный цвет заливки -->
+    <solid android:color="@android:color/transparent"/>
 </shape>
