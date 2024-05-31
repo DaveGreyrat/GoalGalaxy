@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    >
+
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/user1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/fourth"
+            android:text="User 1"
+            android:textColor="@color/first"
+            android:textSize="16sp"
+            app:iconTint="@color/first"
+            app:iconSize="20dp"
+            app:icon="@drawable/baseline_person_24"
+            app:cornerRadius="15dp"
+            android:layout_margin="20dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/user2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/fourth"
+            android:text="User 2"
+            android:textColor="@color/first"
+            android:textSize="16sp"
+            app:iconTint="@color/first"
+            app:iconSize="20dp"
+            app:icon="@drawable/baseline_person_24"
+            app:cornerRadius="15dp"
+            android:layout_margin="20dp"
+            android:layout_below="@id/user1"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/user3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/fourth"
+            android:text="User 3"
+            android:textColor="@color/first"
+            android:textSize="16sp"
+            app:iconTint="@color/first"
+            app:iconSize="20dp"
+            app:icon="@drawable/baseline_person_24"
+            app:cornerRadius="15dp"
+            android:layout_marginTop="60dp"
+            android:layout_below="@id/user2"
+            android:layout_margin="20dp"
+            />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/user4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/fourth"
+            android:text="User 4"
+            android:textColor="@color/first"
+            android:textSize="16sp"
+            app:iconTint="@color/first"
+            app:iconSize="20dp"
+            app:icon="@drawable/baseline_person_24"
+            app:cornerRadius="15dp"
+            android:layout_below="@id/user3"
+            android:layout_marginTop="60dp"
+            android:layout_margin="20dp"
+            />
+
+
+</LinearLayout>
